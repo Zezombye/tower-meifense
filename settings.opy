@@ -46,10 +46,15 @@ settings {
             "ashe": {
                 "ammoClipSize%": 200,
                 "ability1Cooldown%": 75,
-                "ultDuration%": 300
+                "ultDuration%": 200,
+                "ultGen%": 65,
             },
             "bastion": {
-                "ammoClipSize%": 200
+                "ammoClipSize%": 200,
+                "ultGen%": 50,
+            },
+            "torbjorn": {
+                "ultGen%": 50,
             },
             "widowmaker": {
                 "damageDealt%": 120,

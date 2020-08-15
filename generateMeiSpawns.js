@@ -66,7 +66,7 @@ for (var meiSpawn of meiSpawns) {
     ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "smallMessage(getAllPlayers(), \"+{} points (defense bonus)\".format((getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50))" : ""}
     nbRemainingMeis = ${nbMeis} - (6-getNumberOfPlayers(Team.1))
     wait(${waveDuration}, Wait.ABORT_WHEN_FALSE)
-    if gameStatus == POINT_${point}_DEFENSE:
+    if getCurrentObjective() == 0 and gameStatus == POINT_${point}_DEFENSE:
         meiSpawnQueueIndex = ${meiIndex}
         meiTypeQueueIndex = ${meiIndex}
         currentWave++

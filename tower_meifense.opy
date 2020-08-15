@@ -1,5 +1,7 @@
 #!include "settings.opy"
 
+#CH8NK - chill/kill version
+
 #!define ENABLE_WALLS true
 
 #Global variables
