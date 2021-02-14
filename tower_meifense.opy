@@ -44,29 +44,44 @@ playervar regenTimer
 
 #Mei types
 
-globalvar MEI_NO_TYPE = 0
-globalvar MEI_GENERIC = 1
-globalvar MEI_TANK = 2
-globalvar MEI_HEALER = 3
-globalvar MEI_SPEEDY = 4
-globalvar MEI_SNIPER = 5
-globalvar MEI_ULT = 6
-globalvar MEI_MEICOPTER = 7
-globalvar MEI_MEICOPTER_TURRET = 8
-globalvar MEI_SPEEDBOSS = 9
-globalvar MEI_TANK_SNIPER = 10
+#effect 22 (immortality) if healed?
+
+enum Mei:
+    NO_TYPE = 0,
+    GENERIC = 1,
+    TANK = 2, 
+    HEALER = 3,
+    SPEEDY = 4, 
+    SNIPER = 5, 
+    ULT = 6,
+    MEICOPTER = 7,
+    MEICOPTER_TURRET = 8,
+    SPEEDBOSS = 9,
+    TANK_SNIPER = 10,
+
+/*
+enum Mei:
+    NO_TYPE = 0,
+    GENERIC = 1,
+    TANK = 2, 
+    #effect: 21 (nano) or 29 (rage)
+    HEALER = 3,
+    #effect: 18 (heal fountain)
+    SPEEDY = 4, 
+    #effect: 27 (sprint)
+    SNIPER = 5, 
+    ULT = 6, #effect: 29 (rage)
+    MEICOPTER = 7,
+    MEICOPTER_TURRET = 8,
+    SPEEDBOSS = 9, #effect: 27 (sprint), 29 (rage)
+    TANK_SNIPER = 10, #effect: 21 (nano), 29 (rage)
+*/
+globalvar aiBots
+globalvar dummyBots
 
 #!define MEI_BASE_SPEED 65
 #!define MEI_BASE_DMG 500
 #!define MEI_BASE_HEALTH 100
-
-#!define OBFUSCATION_CONST_3M (MEI_TANK_SNIPER*MEI_SPEEDY*MEI_TANK*MEI_SNIPER*MEI_HEALER*MEI_HEALER*MEI_SPEEDY*MEI_SPEEDBOSS*MEI_GENERIC*MEI_SPEEDY*MEI_HEALER*MEI_TANK)
-#!define OBFUSCATION_CONST_9M (MEI_HEALER*MEI_TANK*MEI_SNIPER*MEI_HEALER*MEI_HEALER*MEI_SPEEDY*MEI_GENERIC*MEI_HEALER*MEI_SPEEDY*MEI_TANK_SNIPER*MEI_SPEEDBOSS*MEI_SPEEDY*MEI_TANK)
-#!define OBFUSCATION_CONST_12M_1 (MEI_TANK*MEI_HEALER*MEI_SNIPER*MEI_SPEEDY*MEI_TANK*MEI_SPEEDBOSS*MEI_SPEEDY*MEI_SPEEDY*MEI_HEALER*MEI_GENERIC*MEI_TANK_SNIPER*MEI_HEALER*MEI_SPEEDY)
-#!define OBFUSCATION_CONST_12M_2 (MEI_TANK*MEI_HEALER*MEI_SPEEDY*MEI_SNIPER*MEI_SPEEDY*MEI_SPEEDBOSS*MEI_SPEEDY*MEI_TANK_SNIPER*MEI_GENERIC*MEI_HEALER*MEI_HEALER*MEI_TANK*MEI_SPEEDY)
-
-#!define OBFUSCATED_ARRAY ((OBFUSCATION_CONST_3M+(OBFUSCATION_CONST_12M_1+(-OBFUSCATION_CONST_12M_2)))*(-OBFUSCATION_CONST_9M))
-
 
 #Round status
 
@@ -119,14 +134,6 @@ globalvar MEI_TANK_SNIPER = 10
 
 #!obfuscate
 
-/*rule "whitelist":
-    wait(5)
-    if "{}".format(hostPlayer) != p"Zezombye":
-        hudHeader(getAllPlayers(), p"\n\n\n\n\n\n\n\n\n\nYou are not authorized to play this gamemode!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
-        wait(10)
-        while true:
-            A++*/
-
 rule "init variables":
 	@Event global
     #disableInspector()
@@ -142,8 +149,8 @@ rule "init variables":
     disableGamemodeCompletion()
     disableScoring()
     disableAnnouncer()
-    hudSubtext(getAllPlayers(), "Tower Meifense by /u/Zezombye | Code: T50EZ", HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudSubheader(getAllPlayers(), "Server load: {} | peak: {} | avg: {}\nMade with github.com/Zezombye/OverPy\n".format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad()), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubtext(getAllPlayers(), "Tower Meifense by Zezombye | discord.gg/YP544CH", HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubheader(getAllPlayers(), "Server load: {} | peak: {} | avg: {}\nCode: 0DF50\n".format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad()), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
     print("Meis alive: {}".format(len(getLivingPlayers(Team.2))))
     hudHeader(getAllPlayers(), "Score: {}".format(score), HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
     hudHeader(getAllPlayers(), "High score: {}".format(max(score, highScore)), HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
@@ -161,13 +168,9 @@ rule "skip assembling heroes":
     score = 0
     setMatchTime(10)
 
-rule "glitch patched?":
-    wait(5)
-    if getNumberOfPlayers(Team.2) <= 6:
-        hudHeader(getAllPlayers(), p"\n\n\n\n\n\n\n\nIt seems the glitch has been patched.\nyou sadly arrived too late.\nThe gamemode is now unplayable.\n\n:(\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
-
+    
 rule "player didnt put the bots":
-    hudHeader(hostPlayer if getNumberOfPlayers(Team.2) < 18 else [], "                                                             \n\n\n\n\n\n\n\n----Setup----\n\nPlease put 6 *hard* mei bots in team 2.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) < 18 else [], "                                                             \n\n\n\n\n\n\n\n----Setup----\n\nPlease put 5 *hard* mei bots in team 2.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
     hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], "Everything is good!\nYou can now start the game if you have enough human players.", HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
 
 
@@ -221,19 +224,19 @@ rule "reset mei type on death":
 	@Team 2
 	if attacker != victim and attacker != null:
         score += {
-            MEI_GENERIC: 10,
-            MEI_TANK: 20,
-            MEI_TANK_SNIPER: 100,
-            MEI_HEALER: 30,
-            MEI_SPEEDY: 15,
-            MEI_ULT: 25,
-            MEI_SNIPER: 20,
-            MEI_SPEEDBOSS: 200,
-            MEI_MEICOPTER: 1000,
+            Mei.GENERIC: 10,
+            Mei.TANK: 20,
+            Mei.TANK_SNIPER: 100,
+            Mei.HEALER: 30,
+            Mei.SPEEDY: 15,
+            Mei.ULT: 25,
+            Mei.SNIPER: 20,
+            Mei.SPEEDBOSS: 200,
+            Mei.MEICOPTER: 1000,
         }[victim.meiType]
 
     wait(0.1)
-    victim.meiType = MEI_NO_TYPE
+    victim.meiType = Mei.NO_TYPE
     wait(1)
     victim.isFighting = false
 
@@ -242,13 +245,22 @@ rule "slot available for fighting meis":
 	@Event global
 	@Condition gameStatus != GAME_NOT_STARTED and nbRemainingMeis > 0
     do:
-        if not getPlayers(Team.2)[meiSetFightingIndex].isFighting:
-            nbRemainingMeis--
-            getPlayers(Team.2)[meiSetFightingIndex].isFighting = true
-        wait()
-        meiSetFightingIndex++
-        if meiSetFightingIndex > getNumberOfPlayers(Team.2):
-            meiSetFightingIndex = 0
+        for meiSetFightingIndex in range(len(aiBots)):
+            if not aiBots[meiSetFightingIndex].isFighting:
+                nbRemainingMeis--
+                aiBots[meiSetFightingIndex].isFighting = true
+                if nbRemainingMeis <= 0:
+                    return
+            wait()
+        
+        for meiSetFightingIndex in range(len(dummyBots)):
+            if not dummyBots[meiSetFightingIndex].isFighting:
+                nbRemainingMeis--
+                dummyBots[meiSetFightingIndex].isFighting = true
+                if nbRemainingMeis <= 0:
+                    return
+            wait()
+
     while RULE_CONDITION
 
 rule "mei fights":
@@ -265,30 +277,10 @@ rule "mei fights":
     meiTypeQueueIndex++
 
 #!include "human_regen.opy"
-
-rule "anti copy":
-    wait(5)
-    if not OBFUSCATED_ARRAY:
-        hudHeader(getAllPlayers(), "\n\n\n\n\n\n\n\nIt seems you have tampered with the gamemode!\nPlease don't, it took time for me to make.\nThe server will now crash.\n\n:(\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
-        wait(15)
-        while true:
-            A++
-
 #!include "mei_types.opy"
 #!include "debug.opy"
 #!include "walls.opy"
-
-rule "obfuscate the [-100]":
-    
-
 #!include "fight.opy"
-
-rule "anti copy 2":
-    wait(random.randint(60, 180))
-    if not OBFUSCATED_ARRAY:
-        for Y in range(999999):
-            Z++
-
 #!include "dummies.opy"
 
 rule "tp to objective":
@@ -327,12 +319,12 @@ rule "anti crash":
 	@Condition getServerLoad() > 230
     wait(1, Wait.ABORT_WHEN_FALSE)
     smallMessage(getAllPlayers(), "Anti-crash system activated")
-    setSlowMotion(1)
+    setSlowMotion(30)
     antiCrashActivated = true
 
 rule "disable anti crash":
 	@Event global
-	@Condition antiCrashActivated and getServerLoad() < 180
+	@Condition antiCrashActivated and getServerLoad() < 200
     antiCrashActivated = false
     setSlowMotion(100)
 

@@ -2,13 +2,14 @@
 
 settings {
     "main": {
-        "description": "Tower Meifense by Zezombye - code T50EZ. | Defend yourself from the Mei invasion! You'll need to collaborate and use strategic positioning. Get to wave 9 to win! | Array Glitch by Lazylion, Zezombye, and Developful"
+        "description": "Tower Meifense by Zezombye - code 0DF50. | Defend yourself from the Mei invasion! You'll need to collaborate and use strategic positioning. Get to wave 9 to win! | Infinite Bots Glitch by Magzie & Shiny"
     },
     "lobby": {
         "mapRotation": "paused",
         "spectatorSlots": 6,
         "returnToLobby": "never",
-        "swapTeamsAfterMatch": false
+        "swapTeamsAfterMatch": false,
+        "team2Slots": 5,
     },
     "gamemodes": {
         "assault": {

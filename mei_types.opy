@@ -4,7 +4,7 @@
 rule "mei default":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_NO_TYPE
+	@Condition eventPlayer.meiType == Mei.NO_TYPE
     eventPlayer.setMoveSpeed(MEI_BASE_SPEED)
     eventPlayer.setMaxHealth(MEI_BASE_HEALTH)
     eventPlayer.setDamageDealt(MEI_BASE_DMG)
@@ -28,7 +28,7 @@ rule "mei default":
 rule "mei got chosen":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType != MEI_NO_TYPE
+	@Condition eventPlayer.meiType != Mei.NO_TYPE
     eventPlayer.setMoveSpeed(MEI_BASE_SPEED)
     eventPlayer.clearStatusEffect(Status.PHASED_OUT)
     eventPlayer.clearStatusEffect(Status.ROOTED)
@@ -42,13 +42,13 @@ rule "mei got chosen":
 rule "mei generic":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_GENERIC
+	@Condition eventPlayer.meiType == Mei.GENERIC
     eventPlayer.noCrouchSpam = random.randint(0,20)
 
 rule "mei tank":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_TANK
+	@Condition eventPlayer.meiType == Mei.TANK
     eventPlayer.setMoveSpeed(50)
     eventPlayer.setMaxHealth(500)
     eventPlayer.startHoT(null, 1, 9999)
@@ -60,7 +60,7 @@ rule "mei tank":
 rule "mei tank sniper":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_TANK_SNIPER
+	@Condition eventPlayer.meiType == Mei.TANK_SNIPER
     eventPlayer.setMoveSpeed(50)
     eventPlayer.setMaxHealth(1500)
     eventPlayer.startHoT(null, 1, 9999)
@@ -74,7 +74,7 @@ rule "mei tank sniper":
 rule "mei healer":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_HEALER
+	@Condition eventPlayer.meiType == Mei.HEALER
     eventPlayer.setMaxHealth(250)
     eventPlayer.startHoT(null, 1, 9999)
     eventPlayer.setAbility1Enabled(false)
@@ -88,17 +88,17 @@ rule "mei healer":
 rule "mei healer healing":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_HEALER
+	@Condition eventPlayer.meiType == Mei.HEALER
     do:
         heal(getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF), eventPlayer, 5)
-        heal([player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType != MEI_HEALER], eventPlayer, 30)
+        heal([player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType != Mei.HEALER], eventPlayer, 30)
         wait(0.1)
     while RULE_CONDITION
 
 rule "mei speedy":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_SPEEDY
+	@Condition eventPlayer.meiType == Mei.SPEEDY
     eventPlayer.setMoveSpeed(150)
 
 /*
@@ -117,7 +117,7 @@ rule "mei crouch spam":
 rule "mei sniper":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_SNIPER
+	@Condition eventPlayer.meiType == Mei.SNIPER
     eventPlayer.setMoveSpeed(80)
     eventPlayer.setMaxHealth(150)
     eventPlayer.startHoT(null, 1, 9999)
@@ -132,7 +132,7 @@ rule "mei sniper":
 rule "mei ult spam":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_ULT
+	@Condition eventPlayer.meiType == Mei.ULT
     eventPlayer.setMoveSpeed(100)
     eventPlayer.setMaxHealth(200)
     eventPlayer.setAbility1Enabled(false)
@@ -146,15 +146,17 @@ rule "mei ult spam":
 rule "mei ult use ult":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_ULT and eventPlayer.isHoldingButton(Button.SECONDARY_FIRE)
-    eventPlayer.setUltCharge(100)
-    wait()
-    eventPlayer.forceButtonPress(Button.ULTIMATE)
+	@Condition eventPlayer.meiType == Mei.ULT and eventPlayer.isHoldingButton(Button.SECONDARY_FIRE)
+    do:
+        eventPlayer.setUltCharge(100)
+        wait()
+        eventPlayer.forceButtonPress(Button.ULTIMATE)
+    while RULE_CONDITION
 
 rule "mei speed boss":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_SPEEDBOSS
+	@Condition eventPlayer.meiType == Mei.SPEEDBOSS
     eventPlayer.setMoveSpeed(300)
     eventPlayer.setMaxHealth(500)
     eventPlayer.startHoT(null, 1, 9999)
@@ -166,7 +168,7 @@ rule "mei speed boss":
 rule "meicopter itself":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_MEICOPTER
+	@Condition eventPlayer.meiType == Mei.MEICOPTER
     eventPlayer.setMoveSpeed(100)
     eventPlayer.setMaxHealth(2000)
     eventPlayer.setAbility2Enabled(false)
@@ -213,13 +215,13 @@ while true
 rule "meicopter uses cryo":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_MEICOPTER and eventPlayer.isUsingAbility1()
-    [player for player in getPlayers(Team.2) if player.meiType == MEI_MEICOPTER_TURRET].setUltCharge(95)
+	@Condition eventPlayer.meiType == Mei.MEICOPTER and eventPlayer.isUsingAbility1()
+    [player for player in getPlayers(Team.2) if player.meiType == Mei.MEICOPTER_TURRET].setUltCharge(95)
 
 rule "meicopter dies":
 	@Event playerDied
 	@Team 2
-	@Condition victim.meiType == MEI_MEICOPTER
+	@Condition victim.meiType == Mei.MEICOPTER
     meicopter = null
     destroyEffect(victim.blades[0])
     destroyEffect(victim.blades[1])
@@ -231,7 +233,7 @@ rule "meicopter dies":
 rule "meicopter turrets":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_MEICOPTER_TURRET
+	@Condition eventPlayer.meiType == Mei.MEICOPTER_TURRET
     eventPlayer.setMoveSpeed(100)
     eventPlayer.setGravity(0)
     eventPlayer.setDamageDealt(50)
@@ -243,7 +245,7 @@ rule "meicopter turrets":
 rule "tp meicopter turrets":
 	@Event eachPlayer
 	@Team 2
-	@Condition eventPlayer.meiType == MEI_MEICOPTER_TURRET
+	@Condition eventPlayer.meiType == Mei.MEICOPTER_TURRET
     do:
         eventPlayer.teleport(meicopter.getPosition())
         wait(0.016)
