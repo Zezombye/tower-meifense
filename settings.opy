@@ -2,7 +2,7 @@
 
 settings {
     "main": {
-        "description": "Tower Meifense by Zezombye - code 0DF50. | Defend yourself from the Mei invasion! You'll need to collaborate and use strategic positioning. Get to wave 9 to win! | Infinite Bots Glitch by Magzie & Shiny"
+        "description": "Tower Meifense v"+VERSION+" by Zezombye - code "+CODE+". ▒ Defend yourself from the Mei invasion! You'll need to collaborate and use strategic positioning. Get to wave 9 to win! ▒ Infinite Bots Glitch by Magzie & Shiny ▒ workshop.codes/tower-meifense"
     },
     "lobby": {
         "mapRotation": "paused",

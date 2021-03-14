@@ -8,7 +8,6 @@ rule "mei default":
     eventPlayer.setMoveSpeed(MEI_BASE_SPEED)
     eventPlayer.setMaxHealth(MEI_BASE_HEALTH)
     eventPlayer.setDamageDealt(MEI_BASE_DMG)
-    eventPlayer.clearStatusEffect(Status.BURNING)
     eventPlayer.clearStatusEffect(Status.PHASED_OUT)
     eventPlayer.setPrimaryFireEnabled(true)
     eventPlayer.setSecondaryFireEnabled(false)
@@ -17,6 +16,7 @@ rule "mei default":
     eventPlayer.noCrouchSpam = true
     destroyInWorldText(eventPlayer.icon)
     destroyEffect(eventPlayer.effect)
+    destroyEffect(eventPlayer.effect2)
     #eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 9999)
     #eventPlayer.setInvisibility(Invis.ALL)
     #eventPlayer.setPrimaryFireEnabled(false)
@@ -43,17 +43,20 @@ rule "mei generic":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.GENERIC
+    eventPlayer.startForcingName("Mei")
     eventPlayer.noCrouchSpam = random.randint(0,20)
 
 rule "mei tank":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.TANK
+    eventPlayer.startForcingName("Meircenary")
     eventPlayer.setMoveSpeed(50)
     eventPlayer.setMaxHealth(500)
     eventPlayer.startHoT(null, 1, 9999)
     eventPlayer.setDamageDealt(1500)
-    eventPlayer.setStatusEffect(null, Status.BURNING, 9999)
+    createEffect(getAllPlayers(), Effect.ANA_NANO_BOOSTED, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
+    eventPlayer.effect = getLastCreatedEntity()
     eventPlayer.setAbility2Enabled(false)
     eventPlayer.noCrouchSpam = random.randint(0,10)
 
@@ -61,6 +64,7 @@ rule "mei tank sniper":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.TANK_SNIPER
+    eventPlayer.startForcingName("Meirciless")
     eventPlayer.setMoveSpeed(50)
     eventPlayer.setMaxHealth(1500)
     eventPlayer.startHoT(null, 1, 9999)
@@ -70,11 +74,14 @@ rule "mei tank sniper":
     eventPlayer.setSecondaryFireEnabled(true)
     createEffect(getAllPlayers(), Effect.SPHERE, Color.AQUA, eventPlayer, 0.6, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     eventPlayer.effect = getLastCreatedEntity()
+    createEffect(getAllPlayers(), Effect.ANA_NANO_BOOSTED, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
+    eventPlayer.effect2 = getLastCreatedEntity()
 
 rule "mei healer":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.HEALER
+    eventPlayer.startForcingName("Meidic")
     eventPlayer.setMaxHealth(250)
     eventPlayer.startHoT(null, 1, 9999)
     eventPlayer.setAbility1Enabled(false)
@@ -99,7 +106,10 @@ rule "mei speedy":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.SPEEDY
+    eventPlayer.startForcingName("Meilicious")
     eventPlayer.setMoveSpeed(150)
+    createEffect(getAllPlayers(), Effect.SOLDIER_SPRINTING, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
+    eventPlayer.effect = getLastCreatedEntity()
 
 /*
 rule "mei crouch spam":
@@ -118,6 +128,7 @@ rule "mei sniper":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.SNIPER
+    eventPlayer.startForcingName("{} Meirine {}".format(abilityIconString(Hero.WIDOWMAKER, Button.PRIMARY_FIRE), abilityIconString(Hero.MCCREE, Button.ULTIMATE)))
     eventPlayer.setMoveSpeed(80)
     eventPlayer.setMaxHealth(150)
     eventPlayer.startHoT(null, 1, 9999)
@@ -133,6 +144,7 @@ rule "mei ult spam":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.ULT
+    eventPlayer.startForcingName("Meigalomaniac")
     eventPlayer.setMoveSpeed(100)
     eventPlayer.setMaxHealth(200)
     eventPlayer.setAbility1Enabled(false)
@@ -142,6 +154,8 @@ rule "mei ult spam":
     eventPlayer.noCrouchSpam = random.randint(0,3)
     createInWorldText(getAllPlayers(), iconString(Icon.RADIOACTIVE), eventPlayer, 2, Clip.SURFACES, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.AQUA, SpecVisibility.ALWAYS)
     eventPlayer.icon = getLastCreatedText()
+    createEffect(getAllPlayers(), Effect.WINSTON_PRIMAL_RAGE, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
+    eventPlayer.effect = getLastCreatedEntity()
 
 rule "mei ult use ult":
 	@Event eachPlayer
@@ -157,6 +171,7 @@ rule "mei speed boss":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.SPEEDBOSS
+    eventPlayer.startForcingName("{0} The Meichine {0}".format(abilityIconString(Hero.BASTION, Button.ABILITY_1)))
     eventPlayer.setMoveSpeed(300)
     eventPlayer.setMaxHealth(500)
     eventPlayer.startHoT(null, 1, 9999)
@@ -164,6 +179,10 @@ rule "mei speed boss":
     eventPlayer.setSecondaryFireEnabled(true)
     createInWorldText(getAllPlayers(), iconString(Icon.BOLT), eventPlayer, 2, Clip.NONE, WorldTextReeval.VISIBILITY_POSITION_AND_STRING, Color.RED, SpecVisibility.ALWAYS)
     eventPlayer.icon = getLastCreatedText()
+    createEffect(getAllPlayers(), Effect.SOLDIER_SPRINTING, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
+    eventPlayer.effect = getLastCreatedEntity()
+    createEffect(getAllPlayers(), Effect.WINSTON_PRIMAL_RAGE, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
+    eventPlayer.effect2 = getLastCreatedEntity()
 
 rule "meicopter itself":
 	@Event eachPlayer

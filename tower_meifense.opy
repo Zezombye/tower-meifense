@@ -1,6 +1,84 @@
-#!include "settings.opy"
+
 
 #CH8NK - chill/kill version
+
+/*
+Mei names:
+
+- meircy
+- meiphistopheles
+- meilee
+- meigician
+- meidieval
+- meidal
+- meiditation
+- meidicine
+- meilody
+- meiltdown
+- meinarch
+- meitropolis
+- meital
+- meircenary
+- meigalomaniac
+- meiteorology
+- meitamorph
+- meichanic
+- meissiah
+- meiteorite
+- meircury
+- meirine
+- meirchant
+- meirciless
+- meintalist
+- meidic
+- meilicious
+- meinipulator
+- meigneto
+- meilicious
+- meignificent
+- meitriarch
+- meister
+- meinipulator
+- meistermind
+- meiterial
+- meinager
+- meilevolence
+- meirshmallow
+- meichine
+- meileficent
+- meirvelous
+- meijority
+- meirriage
+- meirathon
+- meisochist
+- meissacre
+- meiriachi
+- meicaroni
+- meirksman
+- meiden
+- meiestro
+- meissive
+- meidness
+- meirtial
+- meimmoth
+- meilman
+- meigenta
+- meimmal
+- meigneto
+- meitrix
+- meihem
+- meiscot
+- meijor
+- meigma
+*/
+
+#!define CODE "T50EZ"
+#!define VERSION "1.1"
+
+#!include "settings.opy"
+
+#!extension spawnMoreDummyBots
+#!extension buffStatusEffects
 
 #!define ENABLE_WALLS true
 
@@ -29,6 +107,8 @@ globalvar highScore
 globalvar meiSetFightingIndex
 globalvar waveTimeRemaining
 globalvar randomQuote 100
+globalvar turretPositions = []
+globalvar bobPositions = []
 
 #Player variables
 
@@ -36,6 +116,7 @@ playervar isOob
 playervar meiType
 playervar icon
 playervar effect
+playervar effect2
 playervar noCrouchSpam
 playervar isFighting
 playervar blades
@@ -43,8 +124,6 @@ playervar wave
 playervar regenTimer
 
 #Mei types
-
-#effect 22 (immortality) if healed?
 
 enum Mei:
     NO_TYPE = 0,
@@ -59,23 +138,7 @@ enum Mei:
     SPEEDBOSS = 9,
     TANK_SNIPER = 10,
 
-/*
-enum Mei:
-    NO_TYPE = 0,
-    GENERIC = 1,
-    TANK = 2, 
-    #effect: 21 (nano) or 29 (rage)
-    HEALER = 3,
-    #effect: 18 (heal fountain)
-    SPEEDY = 4, 
-    #effect: 27 (sprint)
-    SNIPER = 5, 
-    ULT = 6, #effect: 29 (rage)
-    MEICOPTER = 7,
-    MEICOPTER_TURRET = 8,
-    SPEEDBOSS = 9, #effect: 27 (sprint), 29 (rage)
-    TANK_SNIPER = 10, #effect: 21 (nano), 29 (rage)
-*/
+
 globalvar aiBots
 globalvar dummyBots
 
@@ -149,11 +212,17 @@ rule "init variables":
     disableGamemodeCompletion()
     disableScoring()
     disableAnnouncer()
-    hudSubtext(getAllPlayers(), "Tower Meifense by Zezombye | discord.gg/YP544CH", HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudSubheader(getAllPlayers(), "Server load: {} | peak: {} | avg: {}\nCode: 0DF50\n".format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad()), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubtext(getAllPlayers(), "Tower Meifense v"VERSION" by Zezombye | discord.gg/YP544CH", HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubheader(getAllPlayers(), "Server load: {} | peak: {} | avg: {} | effects: {}\nCode: "CODE"\n".format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad(), getNumberOfEntityIds()), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
     print("Meis alive: {}".format(len(getLivingPlayers(Team.2))))
     hudHeader(getAllPlayers(), "Score: {}".format(score), HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
     hudHeader(getAllPlayers(), "High score: {}".format(max(score, highScore)), HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+
+    /*print("position 0: {}".format(bobPositions[0]))
+    print("position 1: {}".format(bobPositions[1]))
+    print("position 2: {}".format(bobPositions[2]))
+    print("position 3: {}".format(bobPositions[3]))*/
+    #print("using ability 1: {}".format(hostPlayer.isUsingAbility1()))
 
 /*rule "force heroes":
     @Event eachPlayer
@@ -170,8 +239,8 @@ rule "skip assembling heroes":
 
     
 rule "player didnt put the bots":
-    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) < 18 else [], "                                                             \n\n\n\n\n\n\n\n----Setup----\n\nPlease put 5 *hard* mei bots in team 2.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
-    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], "Everything is good!\nYou can now start the game if you have enough human players.", HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) < 18 else [], p"                                                             \n\n\n\n\n\n\n\n                            ----Setup----\n\nPlease put 5 *hard* mei bots in team 2.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], p"                                                Everything is good!\nYou can now start the game if you have enough human players.", HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
 
 
 rule "skip preparation":
@@ -216,6 +285,8 @@ rule "mei first spawn":
 	@Team 2
 	@Condition eventPlayer.hasSpawned() and gameStatus == GAME_NOT_STARTED and not isWaitingForPlayers()
     eventPlayer.disableRespawn()
+    eventPlayer.startForcingHero(Hero.MEI)
+    createEffect(getAllPlayers() if eventPlayer.meiType != Mei.HEALER and any([player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER]) else [], Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED, Team.2, eventPlayer, 0, EffectReeval.VISIBILITY)
     wait(0.1)
     kill(eventPlayer, null)
 
@@ -239,7 +310,6 @@ rule "reset mei type on death":
     victim.meiType = Mei.NO_TYPE
     wait(1)
     victim.isFighting = false
-
 
 rule "slot available for fighting meis":
 	@Event global
@@ -313,6 +383,18 @@ rule "meis won the objective":
     wait(0.3)
     goToAssembleHeroes()
     setSlowMotion(100)
+
+
+rule "torb turret destroyed":
+    @Event eachPlayer
+    @Condition not (eventPlayer.getCurrentHero() == Hero.TORBJORN and eventPlayer.isUsingAbility1())
+    turretPositions = []
+
+rule "ashe ult destroyed":
+    @Event eachPlayer
+    @Condition not (eventPlayer.getCurrentHero() == Hero.ASHE and eventPlayer.isUsingUltimate())
+    bobPositions = []
+
 
 rule "anti crash":
 	@Event global
