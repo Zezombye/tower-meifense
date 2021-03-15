@@ -212,11 +212,11 @@ rule "init variables":
     disableGamemodeCompletion()
     disableScoring()
     disableAnnouncer()
-    hudSubtext(getAllPlayers(), "Tower Meifense v"VERSION" by Zezombye | discord.gg/YP544CH", HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudSubheader(getAllPlayers(), "Server load: {} | peak: {} | avg: {} | effects: {}\nCode: "CODE"\n".format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad(), getNumberOfEntityIds()), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    print("Meis alive: {}".format(len(getLivingPlayers(Team.2))))
-    hudHeader(getAllPlayers(), "Score: {}".format(score), HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudHeader(getAllPlayers(), "High score: {}".format(max(score, highScore)), HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubtext(getAllPlayers(), STR_CREDIT, HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubheader(getAllPlayers(), STR_SERVER_LOAD.format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad(), getNumberOfEntityIds()), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    print(STR_MEIS_ALIVE)
+    hudHeader(getAllPlayers(), STR_SCORE, HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudHeader(getAllPlayers(), STR_HIGH_SCORE, HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
 
     /*print("position 0: {}".format(bobPositions[0]))
     print("position 1: {}".format(bobPositions[1]))
@@ -239,8 +239,8 @@ rule "skip assembling heroes":
 
     
 rule "player didnt put the bots":
-    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) < 18 else [], p"                                                             \n\n\n\n\n\n\n\n                            ----Setup----\n\nPlease put 5 *hard* mei bots in team 2.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
-    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], p"                                                Everything is good!\nYou can now start the game if you have enough human players.", HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) < 18 else [], STR_SETUP, HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], STR_SETUP_DONE, HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
 
 
 rule "skip preparation":
@@ -250,27 +250,27 @@ rule "skip preparation":
     wait(0.5)
     randomQuote = random.randint(0, 20)
     setObjectiveDescription(getAllPlayers(), [
-        p"Let's make this right as rein.",
-        p"Let's go, fellas.",
-        p"Let's move out!",
-        p"Let's move out.",
-        p"Remove any doubts in your head; it's us, or them.",
-        p"Remember! This isn't the practice range anymore! This is real life.",
-        p"Watch out. These meis have got a bit of an arsenal and they don't mind using it!",
-        p"Let's have it, lads!",
-        p"Let's give it to them, boys!",
-        p"Let's show them who we are!",
-        p"Are we rushing in? Or are we going sneaky-beaky like?",
-        p"For Mercy and Widow, men!",
-        p"Remember! This is bandit country. Shoot everything that moves.",
-        p"Gear up! We're going in!",
-        p"We are out of here!",
-        p"We're on!",
-        p"Right lads, we're on.",
-        p"These fellas are gonna regret waking up this morning.",
-        p"They're gonna wish they were never born.",
-        p"Let's have at it, mates!",
-        p"Gear up! We are going on a freezing walk here!",
+        STR_OBJ_DESC_1,
+        STR_OBJ_DESC_2,
+        STR_OBJ_DESC_3,
+        STR_OBJ_DESC_4,
+        STR_OBJ_DESC_5,
+        STR_OBJ_DESC_6,
+        STR_OBJ_DESC_7,
+        STR_OBJ_DESC_8,
+        STR_OBJ_DESC_9,
+        STR_OBJ_DESC_10,
+        STR_OBJ_DESC_11,
+        STR_OBJ_DESC_12,
+        STR_OBJ_DESC_13,
+        STR_OBJ_DESC_14,
+        STR_OBJ_DESC_15,
+        STR_OBJ_DESC_16,
+        STR_OBJ_DESC_17,
+        STR_OBJ_DESC_18,
+        STR_OBJ_DESC_19,
+        STR_OBJ_DESC_20,
+        STR_OBJ_DESC_21,
     ][randomQuote], HudReeval.VISIBILITY_AND_STRING)
 
 rule "start game":
@@ -370,7 +370,7 @@ rule "jumppad flank":
 rule "meis won the objective":
 	@Event global
     @Condition getCurrentObjective() == 1 and gameStatus == POINT_A_DEFENSE
-    bigMessage(getAllPlayers(), "Meis win")
+    bigMessage(getAllPlayers(), STR_MEIS_WIN)
     setSlowMotion(90)
     wait(0.5)
     setSlowMotion(70)
@@ -400,7 +400,7 @@ rule "anti crash":
 	@Event global
 	@Condition getServerLoad() > 230
     wait(1, Wait.ABORT_WHEN_FALSE)
-    smallMessage(getAllPlayers(), "Anti-crash system activated")
+    smallMessage(getAllPlayers(), STR_ANTI_CRASH)
     setSlowMotion(30)
     antiCrashActivated = true
 

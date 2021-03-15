@@ -43,14 +43,15 @@ rule "mei generic":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.GENERIC
-    eventPlayer.startForcingName("Mei")
+    eventPlayer.startForcingName(STR_MEI)
+    eventPlayer.setMaxHealth(100)
     eventPlayer.noCrouchSpam = random.randint(0,20)
 
 rule "mei tank":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.TANK
-    eventPlayer.startForcingName("Meircenary")
+    eventPlayer.startForcingName(STR_MEI_TANK)
     eventPlayer.setMoveSpeed(50)
     eventPlayer.setMaxHealth(500)
     eventPlayer.startHoT(null, 1, 9999)
@@ -64,7 +65,7 @@ rule "mei tank sniper":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.TANK_SNIPER
-    eventPlayer.startForcingName("Meirciless")
+    eventPlayer.startForcingName(STR_MEI_TANK_SNIPER)
     eventPlayer.setMoveSpeed(50)
     eventPlayer.setMaxHealth(1500)
     eventPlayer.startHoT(null, 1, 9999)
@@ -81,7 +82,7 @@ rule "mei healer":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.HEALER
-    eventPlayer.startForcingName("Meidic")
+    eventPlayer.startForcingName(STR_MEI_HEALER)
     eventPlayer.setMaxHealth(250)
     eventPlayer.startHoT(null, 1, 9999)
     eventPlayer.setAbility1Enabled(false)
@@ -106,7 +107,7 @@ rule "mei speedy":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.SPEEDY
-    eventPlayer.startForcingName("Meilicious")
+    eventPlayer.startForcingName(STR_MEI_SPEEDY)
     eventPlayer.setMoveSpeed(150)
     createEffect(getAllPlayers(), Effect.SOLDIER_SPRINTING, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
     eventPlayer.effect = getLastCreatedEntity()
@@ -128,7 +129,7 @@ rule "mei sniper":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.SNIPER
-    eventPlayer.startForcingName("{} Meirine {}".format(abilityIconString(Hero.WIDOWMAKER, Button.PRIMARY_FIRE), abilityIconString(Hero.MCCREE, Button.ULTIMATE)))
+    eventPlayer.startForcingName("{}{}{}".format(abilityIconString(Hero.WIDOWMAKER, Button.PRIMARY_FIRE), STR_MEI_SNIPER, abilityIconString(Hero.MCCREE, Button.ULTIMATE)))
     eventPlayer.setMoveSpeed(80)
     eventPlayer.setMaxHealth(150)
     eventPlayer.startHoT(null, 1, 9999)
@@ -144,7 +145,7 @@ rule "mei ult spam":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.ULT
-    eventPlayer.startForcingName("Meigalomaniac")
+    eventPlayer.startForcingName(STR_MEI_ULT)
     eventPlayer.setMoveSpeed(100)
     eventPlayer.setMaxHealth(200)
     eventPlayer.setAbility1Enabled(false)
@@ -171,7 +172,7 @@ rule "mei speed boss":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.SPEEDBOSS
-    eventPlayer.startForcingName("{0} The Meichine {0}".format(abilityIconString(Hero.BASTION, Button.ABILITY_1)))
+    eventPlayer.startForcingName("{0}{1}{0}".format(abilityIconString(Hero.BASTION, Button.ABILITY_1), STR_MEI_SPEED_BOSS))
     eventPlayer.setMoveSpeed(300)
     eventPlayer.setMaxHealth(500)
     eventPlayer.startHoT(null, 1, 9999)
