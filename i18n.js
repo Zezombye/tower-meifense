@@ -6,17 +6,17 @@ console.log(CREATION_DATE);*/
 const translations = {
     CREDIT: {
         "en-US": "Tower Meifense v##VERSION## by Zezombye | discord.gg/YP544CH",
-        "zh-CN": ""
+        "zh-CN": "小美塔防，版本号v##VERSION##，由Zezombye制作 | discord.gg/YP544CH"
     },
     SERVER_LOAD: {
         "en-US": "Server load: {} | peak: {} | avg: {} | effects: {}\nCode: ##CODE##\n",
-        "zh-CN": "",
+        "zh-CN": "服务器负载：{} | 服务器峰值：{} | 服务器平均：{} | 效果：{}\n代码：##CODE##\n",
         "format": "getServerLoad(), getPeakServerLoad(), getAverageServerLoad(), getNumberOfEntityIds()",
         "plaintext": true,
     },
     MEIS_ALIVE: {
         "en-US": "Meis alive: {}",
-        "zh-CN": "存活小美：{}",
+        "zh-CN": "存活的小美：{}",
         "format": "len(getLivingPlayers(Team.2))",
     },
     SCORE: {
@@ -41,7 +41,7 @@ const translations = {
     },
     "OBJ_DESC_1": {
         "en-US": "Let's make this right as rein.",
-        "zh-CN": "我们这就来搞定这个。",
+        "zh-CN": "这就来搞定这群小美。",
         "plaintext": true
     },
     "OBJ_DESC_2": {
@@ -61,17 +61,17 @@ const translations = {
     },
     "OBJ_DESC_5": {
         "en-US": "Remove any doubts in your head; it's us, or them.",
-        "zh-CN": "别再留有任何怀疑的想法，要么我们活下去，要么她们。",
+        "zh-CN": "别再留有任何怀疑的想法，要么是我们活下去，要么是她们。",
         "plaintext": true
     },
     "OBJ_DESC_6": {
         "en-US": "Remember! This isn't the practice range anymore! This is real life.",
-        "zh-CN": "记好了！这可不是训练场！这就是真实发生的事态。",
+        "zh-CN": "记好了！这可不是训练场！这就是现在正在发生的袭击。",
         "plaintext": true
     },
     "OBJ_DESC_7": {
         "en-US": "Watch out. These meis have got a bit of an arsenal and they don't mind using it!",
-        "zh-CN": "小心。这些小美的装备非常精良，而且她们毫不介意到处使用！",
+        "zh-CN": "小心带你。这些小美的装备非常精良，而且她们会对你毫不留情！",
         "plaintext": true
     },
     "OBJ_DESC_8": {
@@ -86,7 +86,7 @@ const translations = {
     },
     "OBJ_DESC_10": {
         "en-US": "Let's show them who we are!",
-        "zh-CN": "让她们记下我们的名字！",
+        "zh-CN": "让她们记住我们的名字！",
         "plaintext": true
     },
     "OBJ_DESC_11": {
@@ -96,12 +96,12 @@ const translations = {
     },
     "OBJ_DESC_12": {
         "en-US": "For Mercy and Widow, men!",
-        "zh-CN": "为了天使和黑百合而战，同志们！",
+        "zh-CN": "为了天使姐姐和黑百合姐姐而战，诸位！",
         "plaintext": true
     },
     "OBJ_DESC_13": {
         "en-US": "Remember! This is bandit country. Shoot everything that moves.",
-        "zh-CN": "记住！这里是个危险的地方。射击一切移动的玩意。",
+        "zh-CN": "各位！这是个危险的地方，对一切能动的玩意开火。",
         "plaintext": true
     },
     "OBJ_DESC_14": {
@@ -111,7 +111,7 @@ const translations = {
     },
     "OBJ_DESC_15": {
         "en-US": "We are out of here!",
-        "zh-CN": "我们要打出这里！",
+        "zh-CN": "我们要从这打出去！",
         "plaintext": true
     },
     "OBJ_DESC_16": {
@@ -136,12 +136,12 @@ const translations = {
     },
     "OBJ_DESC_20": {
         "en-US": "Let's have at it, mates!",
-        "zh-CN": "大伙，打起来！",
+        "zh-CN": "大伙们，冲啊，杀啊！",
         "plaintext": true
     },
     "OBJ_DESC_21": {
         "en-US": "Gear up! We are going on a freezing walk here!",
-        "zh-CN": "拿上装备！我们该在冰面上行走了！",
+        "zh-CN": "拿上装备！我们要开始冰上芭蕾了！",
         "plaintext": true
     },
     MEIS_WIN: {
@@ -150,7 +150,7 @@ const translations = {
     },
     ANTI_CRASH: {
         "en-US": "Anti-crash system activated",
-        "zh-CN": "反崩溃系统启动",
+        "zh-CN": "启动应急反崩溃系统",
     },
     WAVE_XXX_1: {
         "en-US": "Wave ",
@@ -162,7 +162,7 @@ const translations = {
     },
     WAVE_XXX_3: {
         "en-US": "/9",
-        "zh-CN": ""
+        "zh-CN": "/9"
     },
     ADDITIONAL_POINTS: {
         "en-US": " points (defense bonus)",
@@ -170,35 +170,37 @@ const translations = {
     },
     MEI: {
         "en-US": "Mei",
-        "zh-CN": "美"
+        "zh-CN": "小美"
     },
     MEI_TANK: {
         "en-US": "Meircenary",
-        "zh-CN": ""
+        "zh-CN": "重甲小美"
     },
     MEI_TANK_SNIPER: {
         "en-US": "Meirciless",
-        "zh-CN": ""
+        "zh-CN": "重甲狙击手小美"
     },
     MEI_HEALER: {
         "en-US": "Meidic",
-        "zh-CN": ""
+        "zh-CN": "医疗兵小美"
     },
     MEI_SPEEDY: {
         "en-US": "Meilicious",
-        "zh-CN": ""
+        "zh-CN": "飞奔小美"
     },
     MEI_SNIPER: {
         "en-US": " Meirine ",
-        "zh-CN": ""
+        "zh-CN": "狙击手小美",
+        plaintext: true,
     },
     MEI_ULT: {
         "en-US": "Meigalomaniac",
-        "zh-CN": ""
+        "zh-CN": "终极小美"
     },
     MEI_SPEED_BOSS: {
         "en-US": " The Meichine ",
-        "zh-CN": ""
+        "zh-CN": "飞毛腿小美",
+        plaintext: true,
     },
     /*XXXXX: {
         "en-US": "",
@@ -228,7 +230,7 @@ for (var translation in translations) {
     }
 
     console.log(translations[translation].format)
-    result += "#!define STR_"+translation+" ["+availableLanguages.map(x => translations[translation]["plaintext"]?"p":"" + JSON.stringify(translations[translation][x]).replace(/##(\w+)##/g, '"$1"') + (translations[translation].format ? ".format("+translations[translation].format+")" : ""))+'][max(false, practiceRangeTranslations.index("{0}".format(Map.PRACTICE_RANGE)))]\n';
+    result += "#!define STR_"+translation+" ["+availableLanguages.map(x => (translations[translation].plaintext?"p":"") + JSON.stringify(translations[translation][x]).replace(/##(\w+)##/g, '"$1"') + (translations[translation].format ? ".format("+translations[translation].format+")" : ""))+'][max(false, practiceRangeTranslations.index("{0}".format(Map.PRACTICE_RANGE)))]\n';
 }
 
 result

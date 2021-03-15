@@ -44,8 +44,9 @@ rule "mei generic":
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.GENERIC
     eventPlayer.startForcingName(STR_MEI)
-    eventPlayer.setMaxHealth(100)
     eventPlayer.noCrouchSpam = random.randint(0,20)
+    wait(0.1)
+    eventPlayer.setMaxHealth(100)
 
 rule "mei tank":
 	@Event eachPlayer
@@ -129,7 +130,7 @@ rule "mei sniper":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.SNIPER
-    eventPlayer.startForcingName("{}{}{}".format(abilityIconString(Hero.WIDOWMAKER, Button.PRIMARY_FIRE), STR_MEI_SNIPER, abilityIconString(Hero.MCCREE, Button.ULTIMATE)))
+    eventPlayer.startForcingName("{0}{0} {1} {2}{2}".format(abilityIconString(Hero.WIDOWMAKER, Button.PRIMARY_FIRE), STR_MEI_SNIPER, abilityIconString(Hero.MCCREE, Button.ULTIMATE)))
     eventPlayer.setMoveSpeed(80)
     eventPlayer.setMaxHealth(150)
     eventPlayer.startHoT(null, 1, 9999)
@@ -172,7 +173,7 @@ rule "mei speed boss":
 	@Event eachPlayer
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.SPEEDBOSS
-    eventPlayer.startForcingName("{0}{1}{0}".format(abilityIconString(Hero.BASTION, Button.ABILITY_1), STR_MEI_SPEED_BOSS))
+    eventPlayer.startForcingName("{0}{0} {1} {0}{0}".format(abilityIconString(Hero.BASTION, Button.ABILITY_1), STR_MEI_SPEED_BOSS))
     eventPlayer.setMoveSpeed(300)
     eventPlayer.setMaxHealth(500)
     eventPlayer.startHoT(null, 1, 9999)

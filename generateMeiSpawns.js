@@ -60,10 +60,10 @@ for (var meiSpawn of meiSpawns) {
     @Event global
     @Condition gameStatus == POINT_${point}_DEFENSE and currentWave == ${currentWave}
     ${meiSpawn.wave.endsWith("-1") ? "bigMessage(getAllPlayers(), \"{}"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"{}\".format(STR_WAVE_XXX_1, STR_WAVE_XXX_2))" : ""}
-    ${meiSpawn.wave.endsWith("-1") ? "setObjectiveDescription(getAllPlayers(), \"{}}"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"{}\".format(STR_WAVE_XXX_1, STR_WAVE_XXX_3), HudReeval.VISIBILITY_AND_STRING)" : ""}
+    ${meiSpawn.wave.endsWith("-1") ? "setObjectiveDescription(getAllPlayers(), \"{}"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"{}\".format(STR_WAVE_XXX_1, STR_WAVE_XXX_3), HudReeval.VISIBILITY_AND_STRING)" : ""}
     ${meiSpawn.wave.endsWith("-1") ? "setMatchTime("+(waveTime+1)+")" : ""}
     ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "score += (getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50" : ""}
-    ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "smallMessage(getAllPlayers(), \"+{}{}\".format((getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50), STR_ADDITIONAL_POINTS)" : ""}
+    ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "smallMessage(getAllPlayers(), \"+{}{}\".format((getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50, STR_ADDITIONAL_POINTS))" : ""}
     nbRemainingMeis = ${nbMeis} - (6-getNumberOfPlayers(Team.1))
     wait(${waveDuration}, Wait.ABORT_WHEN_FALSE)
     if getCurrentObjective() == 0 and gameStatus == POINT_${point}_DEFENSE:

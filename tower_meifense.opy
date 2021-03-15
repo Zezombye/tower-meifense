@@ -75,6 +75,10 @@ Mei names:
 #!define CODE "T50EZ"
 #!define VERSION "1.1"
 
+#!define i18n() __script__("i18n.js")
+i18n()
+globalvar practiceRangeTranslations = [p"Practice Range", p"训练靶场"]
+
 #!include "settings.opy"
 
 #!extension spawnMoreDummyBots
@@ -213,7 +217,7 @@ rule "init variables":
     disableScoring()
     disableAnnouncer()
     hudSubtext(getAllPlayers(), STR_CREDIT, HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudSubheader(getAllPlayers(), STR_SERVER_LOAD.format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad(), getNumberOfEntityIds()), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubheader(getAllPlayers(), STR_SERVER_LOAD, HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
     print(STR_MEIS_ALIVE)
     hudHeader(getAllPlayers(), STR_SCORE, HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
     hudHeader(getAllPlayers(), STR_HIGH_SCORE, HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
