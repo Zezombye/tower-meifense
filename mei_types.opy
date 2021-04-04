@@ -6,14 +6,22 @@ rule "mei default":
 	@Team 2
 	@Condition eventPlayer.meiType == Mei.NO_TYPE
     eventPlayer.setMoveSpeed(MEI_BASE_SPEED)
-    eventPlayer.setMaxHealth(MEI_BASE_HEALTH)
+    #eventPlayer.setMaxHealth(MEI_BASE_HEALTH)
     eventPlayer.setDamageDealt(MEI_BASE_DMG)
     eventPlayer.clearStatusEffect(Status.PHASED_OUT)
     eventPlayer.setPrimaryFireEnabled(true)
     eventPlayer.setSecondaryFireEnabled(false)
     eventPlayer.setAbility1Enabled(true)
     eventPlayer.setAbility2Enabled(true)
+    eventPlayer.setUltEnabled(true)
+    eventPlayer.setMeleeEnabled(true)
     eventPlayer.noCrouchSpam = true
+    eventPlayer.startScalingSize(1, false)
+    eventPlayer.setKnockbackReceived(100)
+    eventPlayer.enableEnvironmentCollision()
+    eventPlayer.stopForcingPosition()
+    eventPlayer.stopThrottleInDirection()
+    eventPlayer.setInvisibility(Invis.NONE)
     destroyInWorldText(eventPlayer.icon)
     destroyEffect(eventPlayer.effect)
     destroyEffect(eventPlayer.effect2)
@@ -45,7 +53,7 @@ rule "mei generic":
 	@Condition eventPlayer.meiType == Mei.GENERIC
     eventPlayer.startForcingName(STR_MEI)
     eventPlayer.noCrouchSpam = random.randint(0,20)
-    wait(0.1)
+    wait(0.5)
     eventPlayer.setMaxHealth(100)
 
 rule "mei tank":
@@ -57,6 +65,7 @@ rule "mei tank":
     eventPlayer.setMaxHealth(500)
     eventPlayer.startHoT(null, 1, 9999)
     eventPlayer.setDamageDealt(1500)
+    eventPlayer.startScalingSize(1.2, false)
     createEffect(getAllPlayers(), Effect.ANA_NANO_BOOSTED, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
     eventPlayer.effect = getLastCreatedEntity()
     eventPlayer.setAbility2Enabled(false)
@@ -110,8 +119,11 @@ rule "mei speedy":
 	@Condition eventPlayer.meiType == Mei.SPEEDY
     eventPlayer.startForcingName(STR_MEI_SPEEDY)
     eventPlayer.setMoveSpeed(150)
+    eventPlayer.startScalingSize(0.7, false)
     createEffect(getAllPlayers(), Effect.SOLDIER_SPRINTING, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
     eventPlayer.effect = getLastCreatedEntity()
+    wait(0.1)
+    eventPlayer.setMaxHealth(100)
 
 /*
 rule "mei crouch spam":
@@ -185,6 +197,53 @@ rule "mei speed boss":
     eventPlayer.effect = getLastCreatedEntity()
     createEffect(getAllPlayers(), Effect.WINSTON_PRIMAL_RAGE, Color.TEAM_2, eventPlayer, 0, EffectReeval.VISIBILITY)
     eventPlayer.effect2 = getLastCreatedEntity()
+
+    
+rule "mei big":
+	@Event eachPlayer
+	@Team 2
+	@Condition eventPlayer.meiType == Mei.BIG
+    eventPlayer.startForcingName(STR_MEI_BIG)
+    eventPlayer.setMoveSpeed(40)
+    eventPlayer.setMaxHealth(3000)
+    eventPlayer.startHoT(null, 1, 9999999999)
+    eventPlayer.startScalingSize(5, false)
+    eventPlayer.setKnockbackReceived(0)
+    eventPlayer.disableEnvironmentCollision(false)
+/*
+rule "attach mei":
+	@Event eachPlayer
+	@Team 2
+	@Condition eventPlayer.meiType == Mei.BIG
+    @Condition bigMeiPathfinding != null
+    eventPlayer.teleport(bigMeiPathfinding.getPosition())
+    eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), bigMeiPathfinding.getPosition()), 1, Relativity.TO_WORLD, Throttle.REPLACE_EXISTING, ThrottleReeval.DIRECTION_AND_MAGNITUDE)
+    #eventPlayer.attachTo(bigMeiPathfinding, vect(0,0,0))
+    #eventPlayer.startForcingPosition(bigMeiPathfinding.getPosition(), true)
+
+rule "big mei dead":
+	@Event eachPlayer
+	@Team 2
+	@Condition eventPlayer.meiType == Mei.BIG
+    @Condition eventPlayer.isDead()
+    kill(bigMeiPathfinding, null)
+
+rule "mei big pathfinding":
+	@Event eachPlayer
+	@Team 2
+	@Condition eventPlayer.meiType == Mei.BIG_PATHFINDING
+    eventPlayer.startForcingName(STR_MEI)
+    eventPlayer.setMoveSpeed(20)
+    eventPlayer.setStatusEffect(null, Status.PHASED_OUT, 9999)
+    eventPlayer.disableEnvironmentCollision(false)
+    eventPlayer.setInvisibility(Invis.ALL)
+    eventPlayer.setPrimaryFireEnabled(false)
+    eventPlayer.setSecondaryFireEnabled(false)
+    eventPlayer.setAbility1Enabled(false)
+    eventPlayer.setAbility2Enabled(false)
+    eventPlayer.setUltEnabled(false)
+    eventPlayer.setMeleeEnabled(false)
+    bigMeiPathfinding = eventPlayer*/
 
 rule "meicopter itself":
 	@Event eachPlayer

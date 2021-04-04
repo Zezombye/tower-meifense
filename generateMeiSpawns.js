@@ -51,6 +51,7 @@ for (var meiSpawn of meiSpawns) {
         if (parseInt(meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-"))) >= 4) {
             waveTime = BEGINNING_WAVE_DURATION_LAST*2+ENDING_WAVE_DURATION_LAST;
         } else {
+            //waveTime = BEGINNING_WAVE_DURATION_LAST*2+ENDING_WAVE_DURATION_LAST;
             waveTime = BEGINNING_WAVE_DURATION_FIRST*2 + ENDING_WAVE_DURATION_FIRST;
         }
     }
@@ -76,10 +77,17 @@ for (var meiSpawn of meiSpawns) {
 }
 
 result = 
+
 `rule "game win":
     @Event global
     @Condition gameStatus == POINT_${point}_DEFENSE and currentWave == ${currentWave}
-    kill(getPlayers(Team.2), null)
+    bigMessage(getAllPlayers(), STR_KILL_THEM_ALL)
+    setObjectiveDescription(getAllPlayers(), STR_END_GAME, HudReeval.VISIBILITY_AND_STRING)
+
+rule "game win":
+    @Event global
+    @Condition gameStatus == POINT_${point}_DEFENSE and currentWave == ${currentWave} and getNumberOfLivingPlayers(Team.2) == 0
+    #kill(getPlayers(Team.2), null)
     declareTeamVictory(Team.1)
 
 rule "init arrays":

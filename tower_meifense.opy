@@ -70,6 +70,7 @@ Mei names:
 - meiscot
 - meijor
 - meigma
+- meinolith
 */
 
 #!define CODE "T50EZ"
@@ -114,6 +115,9 @@ globalvar randomQuote 100
 globalvar turretPositions = []
 globalvar bobPositions = []
 
+#Scaling fucks with pathfinding, so attach the big mei to a normal sized mei.
+globalvar bigMeiPathfinding = null
+
 #Player variables
 
 playervar isOob
@@ -130,17 +134,20 @@ playervar regenTimer
 #Mei types
 
 enum Mei:
-    NO_TYPE = 0,
-    GENERIC = 1,
-    TANK = 2, 
-    HEALER = 3,
-    SPEEDY = 4, 
-    SNIPER = 5, 
-    ULT = 6,
-    MEICOPTER = 7,
-    MEICOPTER_TURRET = 8,
-    SPEEDBOSS = 9,
-    TANK_SNIPER = 10,
+    NO_TYPE,
+    GENERIC,
+    TANK,
+    HEALER,
+    SPEEDY,
+    SNIPER,
+    ULT,
+    MEICOPTER,
+    MEICOPTER_TURRET,
+    SPEEDBOSS,
+    TANK_SNIPER,
+    BIG,
+    BIG_PATHFINDING,
+
 
 
 globalvar aiBots
@@ -291,6 +298,10 @@ rule "mei first spawn":
     eventPlayer.disableRespawn()
     eventPlayer.startForcingHero(Hero.MEI)
     createEffect(getAllPlayers() if eventPlayer.meiType != Mei.HEALER and any([player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER]) else [], Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED, Team.2, eventPlayer, 0, EffectReeval.VISIBILITY)
+
+    #createBeam(getAllPlayers() if eventPlayer.meiType != Mei.HEALER and eventPlayer.isAlive() and any([player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER]) else [], Beam.GOOD, eventPlayer, [player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER], Color.YELLOW, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+    
+    #createBeam(getAllPlayers() if eventPlayer.meiType != Mei.HEALER and eventPlayer.isAlive() else [], Beam.GOOD, eventPlayer if [player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER] else vect(0,-1000,0), [player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER] or vect(0, -1000, 0), Color.YELLOW, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     wait(0.1)
     kill(eventPlayer, null)
 
@@ -308,6 +319,7 @@ rule "reset mei type on death":
             Mei.SNIPER: 20,
             Mei.SPEEDBOSS: 200,
             Mei.MEICOPTER: 1000,
+            Mei.BIG: 200,
         }[victim.meiType]
 
     wait(0.1)

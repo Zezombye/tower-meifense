@@ -206,6 +206,7 @@ rule "move dummy bot":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
     @Condition eventPlayer.isAlive()
+    #@Condition eventPlayer.meiType != Mei.BIG
     eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), nodePositions[eventPlayer.currentNode]), 1, Relativity.TO_WORLD, Throttle.REPLACE_EXISTING, ThrottleReeval.DIRECTION_AND_MAGNITUDE)
     #eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), sorted([p for p in getLivingPlayers(Team.1) if isInLoS(eventPlayer.getEyePosition(), p.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS)], lambda x: distance(x.getPosition(), eventPlayer.getPosition()))[0].getEyePosition()), 999, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
     chase(eventPlayer.timeRemainingForCurrentNode, 0, rate=1, ChaseReeval.NONE)

@@ -177,22 +177,22 @@ generateMeiSpawns("A", [
             {"type": "Mei.HEALER", "randomSpawn": "A1", "times": 1}, 
             {"type": "Mei.SPEEDY", "randomSpawn": "A1", "times": 2}, 
             {"type": "Mei.TANK", "randomSpawn": "A1", "times": 1},
+            {type: "Mei.BIG", randomSpawn: "A1", times: 1},
         ]
     },{
         wave: "9-2",
         meis: [
-            {"type": "Mei.SPEEDBOSS", "spawn": "A13"}, 
             {"type": "Mei.HEALER", "randomSpawn": "A1", "times": 1}, 
             {"type": "Mei.SPEEDY", "randomSpawn": "A1", "times": 3}, 
-            {"type": "Mei.TANK", "randomSpawn": "A1", "times": 2},
+            {"type": "Mei.TANK", "randomSpawn": "A1", "times": 1},
         ]
     },{
         wave: "9-3",
         meis: [
             {"type": "Mei.TANK_SNIPER", "randomSpawn": "A1", "times": 2},
             {"type": "Mei.SPEEDY", "randomSpawn": "A1", "times": 2},
-            {"type": "Mei.TANK", "randomSpawn": "A1", "times": 3},
-            {"type": "Mei.GENERIC", "randomSpawn": "A1", "times": 3},
+            /*{"type": "Mei.TANK", "randomSpawn": "A1", "times": 3},*/
+            {"type": "Mei.GENERIC", "randomSpawn": "A1", "times": 8},
         ]
     }
 ])

@@ -5,7 +5,7 @@ rule "point A - display walls":
 	@Condition gameStatus <= POINT_A_DEFENSE
     destroyAllEffects()
     wait(0.1)
-    generateBeams([
+    /*generateBeams([
         //#x1, y1, z1, x2, y2, z2
     
         //#-1.84 23 - choke wall
@@ -19,7 +19,7 @@ rule "point A - display walls":
     
         //#-36.08 -0.38 - wall to flank
         [-12.13, -30, -20.22, -27.21, 20, -20.60],
-    ])
+    ])*/
 
 rule "point A - check wall for pre-choke area":
 	@Event eachPlayer

@@ -202,6 +202,18 @@ const translations = {
         "zh-CN": "飞毛腿小美",
         plaintext: true,
     },
+    MEI_BIG: {
+        "en-US": "Meimmoth",
+        "zh-CN": "Meimmoth",
+    },
+    END_GAME: {
+        "en-US": "Kill the remaining meis",
+        "zh-CN": "Kill the remaining meis",
+    },
+    KILL_THEM_ALL: {
+        "en-US": "Kill them all!",
+        "zh-CN": "Kill them all!",
+    }
     /*XXXXX: {
         "en-US": "",
         "fr-FR": ""
