@@ -140,11 +140,11 @@ rule "init variables":
     disableGamemodeCompletion()
     disableScoring()
     disableAnnouncer()
-    hudSubtext(getAllPlayers(), "Tower Meifense by /u/Zezombye | Code: T50EZ", HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudSubheader(getAllPlayers(), "Server load: {} | peak: {} | avg: {}\nMade with github.com/Zezombye/OverPy\n".format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad()), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    print("Meis alive: {}".format(len(getLivingPlayers(Team.2))))
-    hudHeader(getAllPlayers(), "Score: {}".format(score), HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudHeader(getAllPlayers(), "High score: {}".format(max(score, highScore)), HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubtext(getAllPlayers(), "小美塔防，由/u/Zezombye制作 | 代码：KG1N7", HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubheader(getAllPlayers(), "服务器负载：{} | 峰值：{} | 平均：{}\n{}\n".format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad(), "使用github.com/Zezombye/OverPy开发"), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    print("存活小美：{}".format(len(getLivingPlayers(Team.2))))
+    hudHeader(getAllPlayers(), "分数：{}".format(score), HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudHeader(getAllPlayers(), "高分：{}".format(max(score, highScore)), HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
 
 /*rule "force heroes":
     @Event eachPlayer
@@ -162,11 +162,11 @@ rule "skip assembling heroes":
 rule "glitch patched?":
     wait(5)
     if getNumberOfPlayers(Team.2) <= 6:
-        hudHeader(getAllPlayers(), p"\n\n\n\n\n\n\n\nIt seems the glitch has been patched.\nyou sadly arrived too late.\nThe gamemode is now unplayable.\n\n:(\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
+        hudHeader(getAllPlayers(), p"\n\n\n\n\n\n\n\n看起来漏洞已经被修复了。\n很可惜，你来的有点晚。\n本模式现在已无法进行游戏。\n\n:(\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
 
 rule "player didnt put the bots":
-    hudHeader(hostPlayer if getNumberOfPlayers(Team.2) < 18 else [], "                                                             \n\n\n\n\n\n\n\n----Setup----\n\nPlease put 6 *hard* mei bots in team 2.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
-    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], "Everything is good!\nYou can now start the game if you have enough human players.", HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if getNumberOfPlayers(Team.2) < 18 else [], "                                                             \n\n\n\n\n\n\n\n----配置方法----\n\n请选择5个*困难难度*的小美机器人放进队伍2中。\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], "一切准备就绪！\n你现在可以在玩家数量足够之后手动开始游戏。", HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
 
 
 rule "skip preparation":
@@ -176,27 +176,27 @@ rule "skip preparation":
     wait(0.5)
     randomQuote = random.randint(0, 20)
     setObjectiveDescription(getAllPlayers(), [
-        p"Let's make this right as rein.",
-        p"Let's go, fellas.",
-        p"Let's move out!",
-        p"Let's move out.",
-        p"Remove any doubts in your head; it's us, or them.",
-        p"Remember! This isn't the practice range anymore! This is real life.",
-        p"Watch out. These meis have got a bit of an arsenal and they don't mind using it!",
-        p"Let's have it, lads!",
-        p"Let's give it to them, boys!",
-        p"Let's show them who we are!",
-        p"Are we rushing in? Or are we going sneaky-beaky like?",
-        p"For Mercy and Widow, men!",
-        p"Remember! This is bandit country. Shoot everything that moves.",
-        p"Gear up! We're going in!",
-        p"We are out of here!",
-        p"We're on!",
-        p"Right lads, we're on.",
-        p"These fellas are gonna regret waking up this morning.",
-        p"They're gonna wish they were never born.",
-        p"Let's have at it, mates!",
-        p"Gear up! We are going on a freezing walk here!",
+        p"我们这就来搞定这个。",
+        p"伙计们，上吧。",
+        p"快上！",
+        p"快上。",
+        p"别再留有任何怀疑的想法，要么我们活下去，要么她们。",
+        p"记好了！这可不是训练场！这就是真实发生的事态。",
+        p"小心。这些小美的装备非常精良，而且她们毫不介意到处使用！",
+        p"走起来，伙计！",
+        p"上吧小伙子们，给她们瞧瞧我们的厉害！",
+        p"让她们记下我们的名字！",
+        p"我们是直接狂轰滥炸？还是悄悄摸摸的开打？",
+        p"为了天使和黑百合而战，同志们！",
+        p"记住！这里是个危险的地方。射击一切移动的玩意。",
+        p"拿上装备！我们上了！",
+        p"我们要打出这里！",
+        p"我们上！",
+        p"好了伙计们，我们要开火了。",
+        p"这群小美们马上就要后悔今早其实不该起床。",
+        p"这群小美马上就会希望自己没生下来。",
+        p"大伙，打起来！",
+        p"拿上装备！我们该在冰面上行走了！",
     ][randomQuote], HudReeval.VISIBILITY_AND_STRING)
 
 rule "start game":
@@ -267,7 +267,7 @@ rule "mei fights":
 rule "anti copy":
     wait(5)
     if not OBFUSCATED_ARRAY:
-        hudHeader(getAllPlayers(), "\n\n\n\n\n\n\n\nIt seems you have tampered with the gamemode!\nPlease don't, it took time for me to make.\nThe server will now crash.\n\n:(\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
+        hudHeader(getAllPlayers(), "\n\n\n\n\n\n\n\n你似乎篡改过了游戏模式！\n请不要修改本模式，代码需要花很多时间开发。\n服务器现在即将崩溃。\n\n:(\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
         wait(15)
         while true:
             A++
@@ -306,7 +306,7 @@ rule "jumppad flank":
 rule "meis won the objective":
 	@Event global
     @Condition getCurrentObjective() == 1 and gameStatus == POINT_A_DEFENSE
-    bigMessage(getAllPlayers(), "Meis win")
+    bigMessage(getAllPlayers(), "小美获胜")
     setSlowMotion(90)
     wait(0.5)
     setSlowMotion(70)
@@ -324,7 +324,7 @@ rule "anti crash":
 	@Event global
 	@Condition getServerLoad() > 230
     wait(1, Wait.ABORT_WHEN_FALSE)
-    smallMessage(getAllPlayers(), "Anti-crash system activated")
+    smallMessage(getAllPlayers(), "反崩溃系统启动")
     setSlowMotion(1)
     antiCrashActivated = true
 

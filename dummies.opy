@@ -181,26 +181,34 @@ rule "create dummies":
 rule "move dummy bot":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
-    @Condition eventPlayer.isFighting
+    @Condition eventPlayer.isAlive()
     eventPlayer.startThrottleInDirection(directionTowards(eventPlayer.getPosition(), nodePositions[eventPlayer.currentNode]), 1, Relativity.TO_WORLD, Throttle.REPLACE_EXISTING, ThrottleReeval.DIRECTION_AND_MAGNITUDE)
     #eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), sorted([p for p in getLivingPlayers(Team.1) if isInLoS(eventPlayer.getEyePosition(), p.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS)], lambda x: distance(x.getPosition(), eventPlayer.getPosition()))[0].getEyePosition()), 999, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
     chase(eventPlayer.timeRemainingForCurrentNode, 0, rate=1, ChaseReeval.NONE)
 
+rule "pre-game - tp to spawn":
+    @Event eachPlayer
+    @Condition eventPlayer.isDummy()
+    @Condition eventPlayer.isAlive()
+    @Condition isWaitingForPlayers()
+    wait(1)
+    eventPlayer.teleport(random.choice(spawnA1))
+
 rule "dummy dead":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
-    @Condition not eventPlayer.isFighting
+    @Condition eventPlayer.isDead()
     eventPlayer.stopThrottleInDirection()
     eventPlayer.stopFacing()
 
 rule "determine the player to aim at, every 0.5 s to save on server load":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
-    @Condition eventPlayer.isFighting
+    @Condition eventPlayer.isAlive()
     #add randomness to not have a lag spike every 0.5s
     wait(random.uniform(0.4, 0.5))
     eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), eventPlayer.playerToTrack.getEyePosition()), 999, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
-    while eventPlayer.isFighting:
+    while eventPlayer.isAlive():
         eventPlayer.playerToTrack = sorted([p for p in getLivingPlayers(Team.1) if isInLoS(eventPlayer.getEyePosition(), p.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS)], lambda x: distance(x.getPosition(), eventPlayer.getPosition()))[0]
         wait(0.5)
 
@@ -228,7 +236,7 @@ rule "dummy bot - stop using secondary (if sniper)":
 rule "dummy bot - start firing primary":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
-    @Condition eventPlayer.isFighting
+    @Condition eventPlayer.isAlive()
     @Condition not (eventPlayer.meiType in [MEI_SNIPER, MEI_SPEEDBOSS])
     @Condition eventPlayer.playerToTrack != null
     @Condition distance(eventPlayer.getPosition(), eventPlayer.playerToTrack.getPosition()) < 10
@@ -237,7 +245,7 @@ rule "dummy bot - start firing primary":
 rule "dummy bot - stop firing primary":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
-    @Condition eventPlayer.isFighting
+    @Condition eventPlayer.isAlive()
     @Condition not (eventPlayer.meiType in [MEI_SNIPER, MEI_SPEEDBOSS])
     @Condition eventPlayer.playerToTrack == null or distance(eventPlayer.getPosition(), eventPlayer.playerToTrack.getPosition()) >= 10
     eventPlayer.stopForcingButton(Button.PRIMARY_FIRE)
@@ -263,7 +271,7 @@ rule "dummy bot - stop firing secondary":
 rule "dummy bot - use ability 1":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
-    @Condition eventPlayer.isFighting
+    @Condition eventPlayer.isAlive()
     @Condition eventPlayer.getNormalizedHealth() < 0.5
     do:
         eventPlayer.forceButtonPress(Button.ABILITY_1)
@@ -273,7 +281,7 @@ rule "dummy bot - use ability 1":
 rule "go to next node":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
-    @Condition eventPlayer.isFighting
+    @Condition eventPlayer.isAlive()
     @Condition distance(eventPlayer.getPosition(), nodePositions[eventPlayer.currentNode]) < 1
     eventPlayer.currentNode = random.choice([node for node in nodeGraph[eventPlayer.currentNode] if node != eventPlayer.oldNode])
     eventPlayer.oldNode = eventPlayer.currentNode
@@ -282,11 +290,14 @@ rule "go to next node":
 rule "node expired - go to closest node in los":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
-    @Condition eventPlayer.isFighting
+    @Condition eventPlayer.isAlive()
     @Condition eventPlayer.timeRemainingForCurrentNode <= 0
-    eventPlayer.oldNode = null
-    eventPlayer.currentNode = nodePositions.index(sorted([node for node in nodePositions if node != null and isInLoS(eventPlayer.getEyePosition(), node+vect(0,2,0), BarrierLos.PASS_THROUGH_BARRIERS)], lambda x: distance(eventPlayer.getPosition(), x))[0])
-    eventPlayer.timeRemainingForCurrentNode = distance(eventPlayer.getPosition(), nodePositions[eventPlayer.currentNode])/(5.5*0.5)+3
+    do:
+        eventPlayer.oldNode = null
+        eventPlayer.currentNode = nodePositions.index(sorted([node for node in nodePositions if node != null and isInLoS(eventPlayer.getEyePosition(), node+vect(0,2,0), BarrierLos.PASS_THROUGH_BARRIERS)], lambda x: distance(eventPlayer.getPosition(), x))[0])
+        eventPlayer.timeRemainingForCurrentNode = distance(eventPlayer.getPosition(), nodePositions[eventPlayer.currentNode])/(5.5*0.5)+3
+        wait(1)
+    while RULE_CONDITION
 
 /*rule "debug dummies":
     @Event eachPlayer

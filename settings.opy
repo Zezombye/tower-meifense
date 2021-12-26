@@ -2,7 +2,7 @@
 
 settings {
     "main": {
-        "description": "Tower Meifense by Zezombye - code T50EZ. | Defend yourself from the Mei invasion! You'll need to collaborate and use strategic positioning. Get to wave 9 to win! | Array Glitch by Lazylion, Zezombye, and Developful"
+        "description": "小美塔防，由Zezombye制作 - 代码 KG1N7。 | 在小美的连串攻势下保护你自己！你们需要团结一致，并使用有利地形来压制敌方小美。到达第九波就算胜利！ | 向量漏洞由Lazylion、Zezombye和Developful发现"
     },
     "lobby": {
         "mapRotation": "paused",
@@ -49,7 +49,11 @@ settings {
                 "ultDuration%": 300
             },
             "bastion": {
-                "ammoClipSize%": 200
+                "ammoClipSize%": 200,
+                "ultGen%": 50,
+            },
+            "torbjorn": {
+                "ultGen%": 50,
             },
             "widowmaker": {
                 "damageDealt%": 120,

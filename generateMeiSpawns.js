@@ -59,14 +59,14 @@ for (var meiSpawn of meiSpawns) {
 `rule "point ${point} - wave ${meiSpawn.wave}":
     @Event global
     @Condition gameStatus == POINT_${point}_DEFENSE and currentWave == ${currentWave}
-    ${meiSpawn.wave.endsWith("-1") ? "bigMessage(getAllPlayers(), \"Wave "+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"\")" : ""}
-    ${meiSpawn.wave.endsWith("-1") ? "setObjectiveDescription(getAllPlayers(), \"Wave "+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"\", HudReeval.VISIBILITY_AND_STRING)" : ""}
+    ${meiSpawn.wave.endsWith("-1") ? "bigMessage(getAllPlayers(), \"第"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"波\")" : ""}
+    ${meiSpawn.wave.endsWith("-1") ? "setObjectiveDescription(getAllPlayers(), \"第"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"波\", HudReeval.VISIBILITY_AND_STRING)" : ""}
     ${meiSpawn.wave.endsWith("-1") ? "setMatchTime("+(waveTime+1)+")" : ""}
     ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "score += (getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50" : ""}
-    ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "smallMessage(getAllPlayers(), \"+{} points (defense bonus)\".format((getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50))" : ""}
+    ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "smallMessage(getAllPlayers(), \"+{}分（防守加成）\".format((getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50))" : ""}
     nbRemainingMeis = ${nbMeis} - (6-getNumberOfPlayers(Team.1))
     wait(${waveDuration}, Wait.ABORT_WHEN_FALSE)
-    if gameStatus == POINT_${point}_DEFENSE:
+    if getCurrentObjective() == 0 and gameStatus == POINT_${point}_DEFENSE:
         meiSpawnQueueIndex = ${meiIndex}
         meiTypeQueueIndex = ${meiIndex}
         currentWave++
