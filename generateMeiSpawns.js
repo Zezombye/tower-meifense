@@ -51,6 +51,7 @@ for (var meiSpawn of meiSpawns) {
         if (parseInt(meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-"))) >= 4) {
             waveTime = BEGINNING_WAVE_DURATION_LAST*2+ENDING_WAVE_DURATION_LAST;
         } else {
+            //waveTime = BEGINNING_WAVE_DURATION_LAST*2+ENDING_WAVE_DURATION_LAST;
             waveTime = BEGINNING_WAVE_DURATION_FIRST*2 + ENDING_WAVE_DURATION_FIRST;
         }
     }
@@ -59,11 +60,11 @@ for (var meiSpawn of meiSpawns) {
 `rule "point ${point} - wave ${meiSpawn.wave}":
     @Event global
     @Condition gameStatus == POINT_${point}_DEFENSE and currentWave == ${currentWave}
-    ${meiSpawn.wave.endsWith("-1") ? "bigMessage(getAllPlayers(), \"第"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"波\")" : ""}
-    ${meiSpawn.wave.endsWith("-1") ? "setObjectiveDescription(getAllPlayers(), \"第"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"波\", HudReeval.VISIBILITY_AND_STRING)" : ""}
+    ${meiSpawn.wave.endsWith("-1") ? "bigMessage(getAllPlayers(), \"{}"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"{}\".format(STR_WAVE_XXX_1, STR_WAVE_XXX_2))" : ""}
+    ${meiSpawn.wave.endsWith("-1") ? "setObjectiveDescription(getAllPlayers(), \"{}"+meiSpawn.wave.substring(0, meiSpawn.wave.indexOf("-")).trim()+"{}\".format(STR_WAVE_XXX_1, STR_WAVE_XXX_3), HudReeval.VISIBILITY_AND_STRING)" : ""}
     ${meiSpawn.wave.endsWith("-1") ? "setMatchTime("+(waveTime+1)+")" : ""}
     ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "score += (getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50" : ""}
-    ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "smallMessage(getAllPlayers(), \"+{}分（防守加成）\".format((getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50))" : ""}
+    ${meiSpawn.wave.endsWith("-1") && meiSpawn.wave !== "1-1" ? "smallMessage(getAllPlayers(), \"+{}{}\".format((getCapturePercentage() < 33)*100+(getCapturePercentage() < 66)*100+50, STR_ADDITIONAL_POINTS))" : ""}
     nbRemainingMeis = ${nbMeis} - (6-getNumberOfPlayers(Team.1))
     wait(${waveDuration}, Wait.ABORT_WHEN_FALSE)
     if getCurrentObjective() == 0 and gameStatus == POINT_${point}_DEFENSE:
@@ -75,11 +76,18 @@ for (var meiSpawn of meiSpawns) {
     currentWave++;
 }
 
-result = 
+result =
+
 `rule "game win":
     @Event global
     @Condition gameStatus == POINT_${point}_DEFENSE and currentWave == ${currentWave}
-    kill(getPlayers(Team.2), null)
+    bigMessage(getAllPlayers(), STR_KILL_THEM_ALL)
+    setObjectiveDescription(getAllPlayers(), STR_END_GAME, HudReeval.VISIBILITY_AND_STRING)
+
+rule "game win":
+    @Event global
+    @Condition gameStatus == POINT_${point}_DEFENSE and currentWave == ${currentWave} and getNumberOfLivingPlayers(Team.2) == 0
+    #kill(getPlayers(Team.2), null)
     declareTeamVictory(Team.1)
 
 rule "init arrays":

@@ -77,13 +77,13 @@ globalvar nodePositions = [
     vect(67.911, -1.844, -3.597),
     vect(62.100,-1.775, 2.309),
     vect(61.836, -2.098, 20.596),
-    vect(0.848, 0.998, -5.003), 
+    vect(0.848, 0.998, -5.003),
     vect(-4.759, 0.999, -3.260),
     vect(-9.725,0.999, -6.487),
-    vect(-9.364, 0.999, -0.189), 
-    vect(-6.772, 0.999, 3.934), 
-    vect(-4.323, 1.955, 8.669), 
-    vect(-0.185,1.001, 4.812), 
+    vect(-9.364, 0.999, -0.189),
+    vect(-6.772, 0.999, 3.934),
+    vect(-4.323, 1.955, 8.669),
+    vect(-0.185,1.001, 4.812),
     vect(-0.090, 1.001, -0.048),
 ]
 
@@ -153,23 +153,47 @@ globalvar nodeGraph = [
 playervar currentNode
 playervar oldNode
 playervar timeRemainingForCurrentNode
-playervar playerToTrack
+playervar positionToTrack
 
 rule "create dummies":
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
-    createDummy(Hero.MEI, Team.2, [-100], null, null)
+    @Condition getNumberOfPlayers(Team.2) == 5
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+
+rule "create dummies again cause game start":
+    @Condition isInSetup()
+    wait()
+    destroyAllDummies()
+    waitUntil(len([p for p in getPlayers(Team.2) if p.isDummy()]) == 0, 1)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    createDummy(Hero.MEI, Team.2, -1, null, null)
+    wait()
+    aiBots = [p for p in getPlayers(Team.2) if not p.isDummy()]
+    dummyBots = [p for p in getPlayers(Team.2) if p.isDummy()]
 
 /*rule "disp current node":
     @Event eachPlayer
@@ -201,15 +225,39 @@ rule "dummy dead":
     eventPlayer.stopThrottleInDirection()
     eventPlayer.stopFacing()
 
+rule "mei died - check for turret position":
+    @Event playerDied
+    @Team 2
+    @Condition attacker.getCurrentHero() == Hero.TORBJORN
+    @Condition eventAbility == Button.ABILITY_1
+    @Condition eventDirection != null
+    if raycast(victim.getEyePosition(), victim.getEyePosition()+eventDirection*-200, attacker, [], true).getHitPosition() != raycast(victim.getEyePosition(), victim.getEyePosition()+eventDirection*-200, [], [], false).getHitPosition():
+        if not any([distance(x, raycast(victim.getEyePosition(), victim.getEyePosition()+eventDirection*-200, attacker, [], true).getHitPosition()) < 1 for x in turretPositions]):
+            turretPositions.append(raycast(victim.getEyePosition(), victim.getEyePosition()+eventDirection*-200, attacker, [], true).getHitPosition())
+    #createBeam(getAllPlayers(), Beam.GRAPPLE, victim.getEyePosition(), raycast(victim.getEyePosition(), victim.getEyePosition()+eventDirection*-200, getPlayersOnHero(Hero.TORBJORN, Team.1), [], true).getHitPosition(), null, EffectReeval.VISIBILITY)
+
+
+rule "mei died - check for bob position":
+    @Event playerDied
+    @Team 2
+    @Condition attacker.getCurrentHero() == Hero.ASHE
+    @Condition eventAbility == Button.ULTIMATE
+    @Condition eventDirection != null
+    #doing eye position goes over bob, so use position
+    if raycast(victim.getPosition(), victim.getPosition()+eventDirection*-200, attacker, [], true).getHitPosition() != raycast(victim.getPosition(), victim.getPosition()+eventDirection*-200, [], [], false).getHitPosition():
+        if not any([distance(x, raycast(victim.getPosition(), victim.getPosition()+eventDirection*-200, attacker, [], true).getHitPosition()) < 1 for x in bobPositions]):
+            bobPositions.append(raycast(victim.getPosition(), victim.getPosition()+eventDirection*-200, attacker, [], true).getHitPosition())
+    #createBeam(getAllPlayers(), Beam.GRAPPLE, victim.getEyePosition(), raycast(victim.getEyePosition(), victim.getEyePosition()+eventDirection*-200, getPlayersOnHero(Hero.TORBJORN, Team.1), [], true).getHitPosition(), null, EffectReeval.VISIBILITY)
+
 rule "determine the player to aim at, every 0.5 s to save on server load":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
     @Condition eventPlayer.isAlive()
     #add randomness to not have a lag spike every 0.5s
     wait(random.uniform(0.4, 0.5))
-    eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), eventPlayer.playerToTrack.getEyePosition()), 999, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
+    eventPlayer.startFacing(directionTowards(eventPlayer.getEyePosition(), eventPlayer.positionToTrack), 999, Relativity.TO_WORLD, FacingReeval.DIRECTION_AND_TURN_RATE)
     while eventPlayer.isAlive():
-        eventPlayer.playerToTrack = sorted([p for p in getLivingPlayers(Team.1) if isInLoS(eventPlayer.getEyePosition(), p.getEyePosition(), BarrierLos.PASS_THROUGH_BARRIERS)], lambda x: distance(x.getPosition(), eventPlayer.getPosition()))[0]
+        eventPlayer.positionToTrack = sorted([p for p in [player.getEyePosition() for player in getLivingPlayers(Team.1)].concat(turretPositions).concat(bobPositions) if isInLoS(eventPlayer.getEyePosition(), p, BarrierLos.PASS_THROUGH_BARRIERS)], lambda x: distance(x, eventPlayer.getPosition()))[0]
         wait(0.5)
 
     eventPlayer.stopFacing()
@@ -219,53 +267,53 @@ rule "dummy bot - start using secondary (if sniper)":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
     @Condition eventPlayer.isFighting
-    @Condition eventPlayer.meiType == MEI_SNIPER
-    @Condition eventPlayer.playerToTrack != null
-    if eventPlayer.meiType == MEI_SNIPER:
+    @Condition eventPlayer.meiType == Mei.SNIPER
+    @Condition eventPlayer.positionToTrack != null
+    if eventPlayer.meiType == Mei.SNIPER:
         eventPlayer.startForcingButton(Button.SECONDARY_FIRE)
 
 rule "dummy bot - stop using secondary (if sniper)":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
     @Condition eventPlayer.isFighting
-    @Condition eventPlayer.meiType == MEI_SNIPER
-    @Condition eventPlayer.playerToTrack == null
-    if eventPlayer.meiType == MEI_SNIPER:
+    @Condition eventPlayer.meiType == Mei.SNIPER
+    @Condition eventPlayer.positionToTrack == null
+    if eventPlayer.meiType == Mei.SNIPER:
         eventPlayer.stopForcingButton(Button.SECONDARY_FIRE)
 
 rule "dummy bot - start firing primary":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
     @Condition eventPlayer.isAlive()
-    @Condition not (eventPlayer.meiType in [MEI_SNIPER, MEI_SPEEDBOSS])
-    @Condition eventPlayer.playerToTrack != null
-    @Condition distance(eventPlayer.getPosition(), eventPlayer.playerToTrack.getPosition()) < 10
+    @Condition not (eventPlayer.meiType in [Mei.SNIPER, Mei.SPEEDBOSS])
+    @Condition eventPlayer.positionToTrack != null
+    @Condition distance(eventPlayer.getPosition(), eventPlayer.positionToTrack) < 10
     eventPlayer.startForcingButton(Button.PRIMARY_FIRE)
 
 rule "dummy bot - stop firing primary":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
     @Condition eventPlayer.isAlive()
-    @Condition not (eventPlayer.meiType in [MEI_SNIPER, MEI_SPEEDBOSS])
-    @Condition eventPlayer.playerToTrack == null or distance(eventPlayer.getPosition(), eventPlayer.playerToTrack.getPosition()) >= 10
+    @Condition not (eventPlayer.meiType in [Mei.SNIPER, Mei.SPEEDBOSS])
+    @Condition eventPlayer.positionToTrack == null or distance(eventPlayer.getPosition(), eventPlayer.positionToTrack) >= 10
     eventPlayer.stopForcingButton(Button.PRIMARY_FIRE)
 
 rule "dummy bot - start firing secondary":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
     @Condition eventPlayer.isFighting
-    @Condition eventPlayer.meiType in [MEI_TANK_SNIPER, MEI_ULT]
-    @Condition not (eventPlayer.meiType in [MEI_SNIPER, MEI_SPEEDBOSS])
-    @Condition eventPlayer.playerToTrack != null
-    @Condition distance(eventPlayer.getPosition(), eventPlayer.playerToTrack.getPosition()) >= 10
+    @Condition eventPlayer.meiType in [Mei.TANK_SNIPER, Mei.ULT]
+    @Condition not (eventPlayer.meiType in [Mei.SNIPER, Mei.SPEEDBOSS])
+    @Condition eventPlayer.positionToTrack != null
+    @Condition distance(eventPlayer.getPosition(), eventPlayer.positionToTrack) >= 10
     eventPlayer.startForcingButton(Button.SECONDARY_FIRE)
 
 rule "dummy bot - stop firing secondary":
     @Event eachPlayer
     @Condition eventPlayer.isDummy()
     @Condition eventPlayer.isFighting
-    @Condition eventPlayer.meiType in [MEI_TANK_SNIPER, MEI_ULT]
-    @Condition eventPlayer.playerToTrack == null or distance(eventPlayer.getPosition(), eventPlayer.playerToTrack.getPosition()) < 10
+    @Condition eventPlayer.meiType in [Mei.TANK_SNIPER, Mei.ULT]
+    @Condition eventPlayer.positionToTrack == null or distance(eventPlayer.getPosition(), eventPlayer.positionToTrack) < 10
     eventPlayer.stopForcingButton(Button.SECONDARY_FIRE)
 
 rule "dummy bot - use ability 1":

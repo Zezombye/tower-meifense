@@ -1,4 +1,89 @@
+
+
+#CH8NK - chill/kill version
+
+/*
+Mei names:
+
+- meircy
+- meiphistopheles
+- meilee
+- meigician
+- meidieval
+- meidal
+- meiditation
+- meidicine
+- meilody
+- meiltdown
+- meinarch
+- meitropolis
+- meital
+- meircenary
+- meigalomaniac
+- meiteorology
+- meitamorph
+- meichanic
+- meissiah
+- meiteorite
+- meircury
+- meirine
+- meirchant
+- meirciless
+- meintalist
+- meidic
+- meilicious
+- meinipulator
+- meigneto
+- meilicious
+- meignificent
+- meitriarch
+- meister
+- meinipulator
+- meistermind
+- meiterial
+- meinager
+- meilevolence
+- meirshmallow
+- meichine
+- meileficent
+- meirvelous
+- meijority
+- meirriage
+- meirathon
+- meisochist
+- meissacre
+- meiriachi
+- meicaroni
+- meirksman
+- meiden
+- meiestro
+- meissive
+- meidness
+- meirtial
+- meimmoth
+- meilman
+- meigenta
+- meimmal
+- meigneto
+- meitrix
+- meihem
+- meiscot
+- meijor
+- meigma
+- meinolith
+*/
+
+#!define CODE "T50EZ"
+#!define VERSION "1.1"
+
+#!define i18n() __script__("i18n.js")
+i18n()
+globalvar practiceRangeTranslations = [p"Practice Range", p"训练靶场"]
+
 #!include "settings.opy"
+
+#!extension spawnMoreDummyBots
+#!extension buffStatusEffects
 
 #!define ENABLE_WALLS true
 
@@ -27,6 +112,11 @@ globalvar highScore
 globalvar meiSetFightingIndex
 globalvar waveTimeRemaining
 globalvar randomQuote 100
+globalvar turretPositions = []
+globalvar bobPositions = []
+
+#Scaling fucks with pathfinding, so attach the big mei to a normal sized mei.
+globalvar bigMeiPathfinding = null
 
 #Player variables
 
@@ -34,6 +124,7 @@ playervar isOob
 playervar meiType
 playervar icon
 playervar effect
+playervar effect2
 playervar noCrouchSpam
 playervar isFighting
 playervar blades
@@ -42,29 +133,29 @@ playervar regenTimer
 
 #Mei types
 
-globalvar MEI_NO_TYPE = 0
-globalvar MEI_GENERIC = 1
-globalvar MEI_TANK = 2
-globalvar MEI_HEALER = 3
-globalvar MEI_SPEEDY = 4
-globalvar MEI_SNIPER = 5
-globalvar MEI_ULT = 6
-globalvar MEI_MEICOPTER = 7
-globalvar MEI_MEICOPTER_TURRET = 8
-globalvar MEI_SPEEDBOSS = 9
-globalvar MEI_TANK_SNIPER = 10
+enum Mei:
+    NO_TYPE,
+    GENERIC,
+    TANK,
+    HEALER,
+    SPEEDY,
+    SNIPER,
+    ULT,
+    MEICOPTER,
+    MEICOPTER_TURRET,
+    SPEEDBOSS,
+    TANK_SNIPER,
+    BIG,
+    BIG_PATHFINDING,
+
+
+
+globalvar aiBots
+globalvar dummyBots
 
 #!define MEI_BASE_SPEED 65
 #!define MEI_BASE_DMG 500
 #!define MEI_BASE_HEALTH 100
-
-#!define OBFUSCATION_CONST_3M (MEI_TANK_SNIPER*MEI_SPEEDY*MEI_TANK*MEI_SNIPER*MEI_HEALER*MEI_HEALER*MEI_SPEEDY*MEI_SPEEDBOSS*MEI_GENERIC*MEI_SPEEDY*MEI_HEALER*MEI_TANK)
-#!define OBFUSCATION_CONST_9M (MEI_HEALER*MEI_TANK*MEI_SNIPER*MEI_HEALER*MEI_HEALER*MEI_SPEEDY*MEI_GENERIC*MEI_HEALER*MEI_SPEEDY*MEI_TANK_SNIPER*MEI_SPEEDBOSS*MEI_SPEEDY*MEI_TANK)
-#!define OBFUSCATION_CONST_12M_1 (MEI_TANK*MEI_HEALER*MEI_SNIPER*MEI_SPEEDY*MEI_TANK*MEI_SPEEDBOSS*MEI_SPEEDY*MEI_SPEEDY*MEI_HEALER*MEI_GENERIC*MEI_TANK_SNIPER*MEI_HEALER*MEI_SPEEDY)
-#!define OBFUSCATION_CONST_12M_2 (MEI_TANK*MEI_HEALER*MEI_SPEEDY*MEI_SNIPER*MEI_SPEEDY*MEI_SPEEDBOSS*MEI_SPEEDY*MEI_TANK_SNIPER*MEI_GENERIC*MEI_HEALER*MEI_HEALER*MEI_TANK*MEI_SPEEDY)
-
-#!define OBFUSCATED_ARRAY ((OBFUSCATION_CONST_3M+(OBFUSCATION_CONST_12M_1+(-OBFUSCATION_CONST_12M_2)))*(-OBFUSCATION_CONST_9M))
-
 
 #Round status
 
@@ -117,14 +208,6 @@ globalvar MEI_TANK_SNIPER = 10
 
 #!obfuscate
 
-/*rule "whitelist":
-    wait(5)
-    if "{}".format(hostPlayer) != p"Zezombye":
-        hudHeader(getAllPlayers(), p"\n\n\n\n\n\n\n\n\n\nYou are not authorized to play this gamemode!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
-        wait(10)
-        while true:
-            A++*/
-
 rule "init variables":
 	@Event global
     #disableInspector()
@@ -140,11 +223,17 @@ rule "init variables":
     disableGamemodeCompletion()
     disableScoring()
     disableAnnouncer()
-    hudSubtext(getAllPlayers(), "小美塔防，由/u/Zezombye制作 | 代码：KG1N7", HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudSubheader(getAllPlayers(), "服务器负载：{} | 峰值：{} | 平均：{}\n{}\n".format(getServerLoad(), getPeakServerLoad(), getAverageServerLoad(), "使用github.com/Zezombye/OverPy开发"), HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    print("存活小美：{}".format(len(getLivingPlayers(Team.2))))
-    hudHeader(getAllPlayers(), "分数：{}".format(score), HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
-    hudHeader(getAllPlayers(), "高分：{}".format(max(score, highScore)), HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubtext(getAllPlayers(), STR_CREDIT, HudPosition.LEFT, -200, Color.YELLOW, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudSubheader(getAllPlayers(), STR_SERVER_LOAD, HudPosition.LEFT, -100, Color.WHITE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    print(STR_MEIS_ALIVE)
+    hudHeader(getAllPlayers(), STR_SCORE, HudPosition.LEFT, -15, Color.GREEN, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+    hudHeader(getAllPlayers(), STR_HIGH_SCORE, HudPosition.LEFT, -10, Color.BLUE, HudReeval.VISIBILITY_AND_STRING, SpecVisibility.ALWAYS)
+
+    /*print("position 0: {}".format(bobPositions[0]))
+    print("position 1: {}".format(bobPositions[1]))
+    print("position 2: {}".format(bobPositions[2]))
+    print("position 3: {}".format(bobPositions[3]))*/
+    #print("using ability 1: {}".format(hostPlayer.isUsingAbility1()))
 
 /*rule "force heroes":
     @Event eachPlayer
@@ -159,14 +248,10 @@ rule "skip assembling heroes":
     score = 0
     setMatchTime(10)
 
-rule "glitch patched?":
-    wait(5)
-    if getNumberOfPlayers(Team.2) <= 6:
-        hudHeader(getAllPlayers(), p"\n\n\n\n\n\n\n\n看起来漏洞已经被修复了。\n很可惜，你来的有点晚。\n本模式现在已无法进行游戏。\n\n:(\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
 
 rule "player didnt put the bots":
-    hudHeader(hostPlayer if getNumberOfPlayers(Team.2) < 18 else [], "                                                             \n\n\n\n\n\n\n\n----配置方法----\n\n请选择5个*困难难度*的小美机器人放进队伍2中。\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
-    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], "一切准备就绪！\n你现在可以在玩家数量足够之后手动开始游戏。", HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) < 18 else [], STR_SETUP, HudPosition.TOP, -99, Color.RED, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
+    hudHeader(hostPlayer if isWaitingForPlayers() and getNumberOfPlayers(Team.2) >= 18 else [], STR_SETUP_DONE, HudPosition.TOP, -99, Color.GREEN, HudReeval.VISIBILITY, SpecVisibility.DEFAULT)
 
 
 rule "skip preparation":
@@ -176,27 +261,27 @@ rule "skip preparation":
     wait(0.5)
     randomQuote = random.randint(0, 20)
     setObjectiveDescription(getAllPlayers(), [
-        p"我们这就来搞定这个。",
-        p"伙计们，上吧。",
-        p"快上！",
-        p"快上。",
-        p"别再留有任何怀疑的想法，要么我们活下去，要么她们。",
-        p"记好了！这可不是训练场！这就是真实发生的事态。",
-        p"小心。这些小美的装备非常精良，而且她们毫不介意到处使用！",
-        p"走起来，伙计！",
-        p"上吧小伙子们，给她们瞧瞧我们的厉害！",
-        p"让她们记下我们的名字！",
-        p"我们是直接狂轰滥炸？还是悄悄摸摸的开打？",
-        p"为了天使和黑百合而战，同志们！",
-        p"记住！这里是个危险的地方。射击一切移动的玩意。",
-        p"拿上装备！我们上了！",
-        p"我们要打出这里！",
-        p"我们上！",
-        p"好了伙计们，我们要开火了。",
-        p"这群小美们马上就要后悔今早其实不该起床。",
-        p"这群小美马上就会希望自己没生下来。",
-        p"大伙，打起来！",
-        p"拿上装备！我们该在冰面上行走了！",
+        STR_OBJ_DESC_1,
+        STR_OBJ_DESC_2,
+        STR_OBJ_DESC_3,
+        STR_OBJ_DESC_4,
+        STR_OBJ_DESC_5,
+        STR_OBJ_DESC_6,
+        STR_OBJ_DESC_7,
+        STR_OBJ_DESC_8,
+        STR_OBJ_DESC_9,
+        STR_OBJ_DESC_10,
+        STR_OBJ_DESC_11,
+        STR_OBJ_DESC_12,
+        STR_OBJ_DESC_13,
+        STR_OBJ_DESC_14,
+        STR_OBJ_DESC_15,
+        STR_OBJ_DESC_16,
+        STR_OBJ_DESC_17,
+        STR_OBJ_DESC_18,
+        STR_OBJ_DESC_19,
+        STR_OBJ_DESC_20,
+        STR_OBJ_DESC_21,
     ][randomQuote], HudReeval.VISIBILITY_AND_STRING)
 
 rule "start game":
@@ -211,6 +296,12 @@ rule "mei first spawn":
 	@Team 2
 	@Condition eventPlayer.hasSpawned() and gameStatus == GAME_NOT_STARTED and not isWaitingForPlayers()
     eventPlayer.disableRespawn()
+    eventPlayer.startForcingHero(Hero.MEI)
+    createEffect(getAllPlayers() if eventPlayer.meiType != Mei.HEALER and any([player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER]) else [], Effect.BAPTISTE_IMMORTALITY_FIELD_PROTECTED, Team.2, eventPlayer, 0, EffectReeval.VISIBILITY)
+
+    #createBeam(getAllPlayers() if eventPlayer.meiType != Mei.HEALER and eventPlayer.isAlive() and any([player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER]) else [], Beam.GOOD, eventPlayer, [player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER], Color.YELLOW, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
+
+    #createBeam(getAllPlayers() if eventPlayer.meiType != Mei.HEALER and eventPlayer.isAlive() else [], Beam.GOOD, eventPlayer if [player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER] else vect(0,-1000,0), [player for player in getPlayersInRadius(eventPlayer.getPosition(), 15, Team.2, LosCheck.OFF) if player.meiType == Mei.HEALER] or vect(0, -1000, 0), Color.YELLOW, EffectReeval.VISIBILITY_POSITION_AND_RADIUS)
     wait(0.1)
     kill(eventPlayer, null)
 
@@ -219,34 +310,43 @@ rule "reset mei type on death":
 	@Team 2
 	if attacker != victim and attacker != null:
         score += {
-            MEI_GENERIC: 10,
-            MEI_TANK: 20,
-            MEI_TANK_SNIPER: 100,
-            MEI_HEALER: 30,
-            MEI_SPEEDY: 15,
-            MEI_ULT: 25,
-            MEI_SNIPER: 20,
-            MEI_SPEEDBOSS: 200,
-            MEI_MEICOPTER: 1000,
+            Mei.GENERIC: 10,
+            Mei.TANK: 20,
+            Mei.TANK_SNIPER: 100,
+            Mei.HEALER: 30,
+            Mei.SPEEDY: 15,
+            Mei.ULT: 25,
+            Mei.SNIPER: 20,
+            Mei.SPEEDBOSS: 200,
+            Mei.MEICOPTER: 1000,
+            Mei.BIG: 200,
         }[victim.meiType]
 
     wait(0.1)
-    victim.meiType = MEI_NO_TYPE
+    victim.meiType = Mei.NO_TYPE
     wait(1)
     victim.isFighting = false
-
 
 rule "slot available for fighting meis":
 	@Event global
 	@Condition gameStatus != GAME_NOT_STARTED and nbRemainingMeis > 0
     do:
-        if not getPlayers(Team.2)[meiSetFightingIndex].isFighting:
-            nbRemainingMeis--
-            getPlayers(Team.2)[meiSetFightingIndex].isFighting = true
-        wait()
-        meiSetFightingIndex++
-        if meiSetFightingIndex > getNumberOfPlayers(Team.2):
-            meiSetFightingIndex = 0
+        for meiSetFightingIndex in range(len(aiBots)):
+            if not aiBots[meiSetFightingIndex].isFighting:
+                nbRemainingMeis--
+                aiBots[meiSetFightingIndex].isFighting = true
+                if nbRemainingMeis <= 0:
+                    return
+            wait()
+
+        for meiSetFightingIndex in range(len(dummyBots)):
+            if not dummyBots[meiSetFightingIndex].isFighting:
+                nbRemainingMeis--
+                dummyBots[meiSetFightingIndex].isFighting = true
+                if nbRemainingMeis <= 0:
+                    return
+            wait()
+
     while RULE_CONDITION
 
 rule "mei fights":
@@ -263,30 +363,10 @@ rule "mei fights":
     meiTypeQueueIndex++
 
 #!include "human_regen.opy"
-
-rule "anti copy":
-    wait(5)
-    if not OBFUSCATED_ARRAY:
-        hudHeader(getAllPlayers(), "\n\n\n\n\n\n\n\n你似乎篡改过了游戏模式！\n请不要修改本模式，代码需要花很多时间开发。\n服务器现在即将崩溃。\n\n:(\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", HudPosition.TOP, -9999999, Color.RED, HudReeval.VISIBILITY, SpecVisibility.ALWAYS)
-        wait(15)
-        while true:
-            A++
-
 #!include "mei_types.opy"
 #!include "debug.opy"
 #!include "walls.opy"
-
-rule "obfuscate the [-100]":
-    
-
 #!include "fight.opy"
-
-rule "anti copy 2":
-    wait(random.randint(60, 180))
-    if not OBFUSCATED_ARRAY:
-        for Y in range(999999):
-            Z++
-
 #!include "dummies.opy"
 
 rule "tp to objective":
@@ -306,7 +386,7 @@ rule "jumppad flank":
 rule "meis won the objective":
 	@Event global
     @Condition getCurrentObjective() == 1 and gameStatus == POINT_A_DEFENSE
-    bigMessage(getAllPlayers(), "小美获胜")
+    bigMessage(getAllPlayers(), STR_MEIS_WIN)
     setSlowMotion(90)
     wait(0.5)
     setSlowMotion(70)
@@ -320,17 +400,28 @@ rule "meis won the objective":
     goToAssembleHeroes()
     setSlowMotion(100)
 
+
+rule "torb turret destroyed":
+    @Event eachPlayer
+    @Condition not (eventPlayer.getCurrentHero() == Hero.TORBJORN and eventPlayer.isUsingAbility1())
+    turretPositions = []
+
+rule "ashe ult destroyed":
+    @Event eachPlayer
+    @Condition not (eventPlayer.getCurrentHero() == Hero.ASHE and eventPlayer.isUsingUltimate())
+    bobPositions = []
+
+
 rule "anti crash":
 	@Event global
 	@Condition getServerLoad() > 230
     wait(1, Wait.ABORT_WHEN_FALSE)
-    smallMessage(getAllPlayers(), "反崩溃系统启动")
-    setSlowMotion(1)
+    smallMessage(getAllPlayers(), STR_ANTI_CRASH)
+    setSlowMotion(30)
     antiCrashActivated = true
 
 rule "disable anti crash":
 	@Event global
-	@Condition antiCrashActivated and getServerLoad() < 180
+	@Condition antiCrashActivated and getServerLoad() < 200
     antiCrashActivated = false
     setSlowMotion(100)
-

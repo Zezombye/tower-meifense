@@ -3,7 +3,7 @@ function calculateDist(x1, z1, x2, z2) {
 }
 
 var result = "";
-var spacing = 1;
+var spacing = 1.3;
 
 for (var wallBeam of wallBeams) {
     var startx = wallBeam[0]
